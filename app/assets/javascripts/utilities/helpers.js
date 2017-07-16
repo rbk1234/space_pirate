@@ -67,7 +67,11 @@
 
     // General helpers:
 
-    var util = SpacePirate.namespace("Util");
+    var util = SpacePirate.namespace("Utilities");
+
+    util.minScreenWidth = function() {
+        return parseInt($('.main-content').css('min-width'));
+    };
 
     util.makeCallback = function (target, method) {
         return function () {

@@ -1,15 +1,10 @@
 
 (function($){
 
-    var FONT_HEIGHT = 14;
-    var FONT_WIDTH = FONT_HEIGHT * 3.0 / 5.0; // Having a width that is 3/5 of the height is standard for monospace text
-
-    var CANVAS_ROWS = 25;
-    var CANVAS_COLUMNS = 90;
-
     var Main = function() {
         this._init();
     };
+
     Main.prototype = {
         _timing: null,
         _canvases: null,
@@ -18,13 +13,15 @@
         _keyboard: null,
 
         _init: function() {
+            // Store Game Settings globally
+            SpacePirate.namespace('Global').settings = new SpacePirate.Game.Settings({
+                fontSize: 14
+            });
+
             this._setupTiming();
             this._setupIO();
-            this._loadCanvases();
-            this._loadLog();
 
-            this._screen = new SpacePirate.Screens.Screen1();
-            this._createPeriodicFn(SpacePirate.Util.makeCallback(this, this._eachSecond), 1000);
+            this._createPeriodicFn(SpacePirate.Utilities.makeCallback(this, this._eachSecond), 1000);
             this._run();
         },
 
@@ -68,59 +65,31 @@
         },
 
         _setupIO: function() {
+            // ---- keyboard:
             this._keyboard = new SpacePirate.IO.Keyboard();
-        },
 
-        _loadCanvases: function() {
-            var self = this;
-            this._canvases = {};
+            // ---- canvas:
+            var $canvasContainer = $('.canvas-container');
 
-            $('.canvas-container').width(this._canvasWidth());
+            var mainCanvas = new SpacePirate.IO.Canvas($canvasContainer, {
+                canvasId: 'main'
+            });
 
-            self._loadCanvas('main');
-        },
-
-        _loadLog: function() {
-            var logOffset = this._canvasWidth() + 20;
-            var logMinWidth = this._minScreenWidth() - logOffset;
-            $('.log-container').css('padding-left', logOffset).css('min-width', logMinWidth);
-        },
-
-        _loadCanvas: function(id) {
-            var $canvas = $('#'+id+'-canvas');
-            var canvas = $canvas.get(0);
-            var context = canvas.getContext('2d');
-            this._convertCanvasToHiDPI(canvas, this._canvasWidth(), this._canvasHeight());
-
-            context.font = FONT_HEIGHT + 'px monospace';
-            context.fillStyle = "#3f3f3f";
-
-            this._canvases[id] = {
-                $canvas: $canvas,
-                context: context
+            this._canvases = {
+                main: mainCanvas
             };
-        },
 
-        // TODO Internet Explorer
-        // https://stackoverflow.com/questions/22483296/html5-msbackingstorepixelratio-and-window-devicepixelratio-dont-exist-are-the
-        _convertCanvasToHiDPI: function(canvas, width, height, ratio) {
-            var context = canvas.getContext('2d');
+            // ---- log:
+            var $logContainer = $('.log-container');
+            var logOffset = mainCanvas.width() + 20;
 
-            if (!ratio) {
-                var dpr = window.devicePixelRatio || 1;
-                var bsr = context.webkitBackingStorePixelRatio ||
-                    context.mozBackingStorePixelRatio ||
-                    context.msBackingStorePixelRatio ||
-                    context.oBackingStorePixelRatio ||
-                    context.backingStorePixelRatio || 1;
-                ratio = dpr / bsr;
-            }
+            this._log = new SpacePirate.IO.Log($logContainer, {
+                leftOffset: logOffset,
+                minWidth: SpacePirate.Utilities.minScreenWidth() - logOffset
+            });
 
-            canvas.width = width * ratio;
-            canvas.height = height * ratio;
-            canvas.style.width = width + "px";
-            canvas.style.height = height + "px";
-            context.setTransform(ratio, 0, 0, ratio, 0, 0);
+            // ---- screen:
+            this._screen = new SpacePirate.IO.Screen1();
         },
 
         _gameLoop: function() {
@@ -142,61 +111,25 @@
             //    this._player.x += this._player.speed * modifier;
             //}
 
-            this._drawMain();
-        },
-
-        _drawMain: function() {
-            var context = this._canvases.main.context;
-            var $canvas = this._canvases.main.$canvas;
-
-            context.clearRect(0, 0, $canvas.width(), $canvas.height());
-
-            this._drawImage(this._screen.background, context)
-        },
-
-        _drawImage: function(charArray, context, x, y) {
-            x = SpacePirate.Util.defaultFor(x, 0);
-            y = SpacePirate.Util.defaultFor(y, 0);
-            y += (FONT_HEIGHT - 2); // Move down one row. Move up a tiny bit.
-
-            for (var row = 0; row < charArray.length; row++) {
-                for (var col = 0; col < charArray[row].length; col++) {
-                    context.fillText(charArray[row][col], x + col * FONT_WIDTH, y + row * FONT_HEIGHT);
-                }
-            }
+            this._canvases.main.clear();
+            this._canvases.main.drawImage(this._screen.background);
         },
 
         _eachSecond: function(iterations) {
-            this._updateFps();
-            // TODO Draw background less often
-        },
-
-        _updateFps: function() {
             var fps = (1000 / this._timing.delta).toFixed(1);
             var total = (this._timing.total / 1000).toFixed(1);
 
             $('#fps').text(fps);
             $('#total-time').text(total);
-        },
 
-
-        // ---------------------------------------------------------------- Dimension helpers
-
-        _minScreenWidth: function() {
-            return parseInt($('.main-content').css('min-width'));
+            // TODO Draw background less often
         },
-        _canvasHeight: function() {
-            return CANVAS_ROWS * FONT_HEIGHT;
-        },
-        _canvasWidth: function() {
-            return CANVAS_COLUMNS * FONT_WIDTH;
-        },
-
 
         // ---------------------------------------------------------------- Periodic function helpers
+        // A periodic function does not run every game loop, it runs every X milliseconds (to improve performance)
 
         _createPeriodicFn: function(fn, period, cache) {
-            cache = SpacePirate.Util.defaultFor(cache, false);
+            cache = SpacePirate.Utilities.defaultFor(cache, false);
 
             this._timing.periodicFns.push({
                 fn: fn,
