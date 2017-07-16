@@ -1,0 +1,26 @@
+# SQLite version 3.x
+#   gem install sqlite3
+#
+#   Ensure the SQLite 3 gem is defined in your Gemfile
+#   gem 'sqlite3'
+#
+default: &default
+  host: localhost
+  adapter: postgresql
+  encoding: unicode
+  database: space_pirate
+  pool: 5
+  username: postgres
+  password: postgres
+
+development:
+  <<: *default
+  database: space_pirate
+
+test:
+  <<: *default
+  database: space_pirate_test
+
+production:
+  <<: *default
+  database: space_pirate
