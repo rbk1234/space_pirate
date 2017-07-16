@@ -1,14 +1,39 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>SpacePirate</title>
-  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
-  <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+
+  <%= stylesheet_link_tag "foundation_and_overrides", media: "all", "data-turbolinks-track" => true %>
+  <%= stylesheet_link_tag "application", media: "all", "data-turbolinks-track" => true %>
+
+  <%= javascript_include_tag "vendor/modernizr" %>
+  <%= javascript_include_tag "application", "data-turbolinks-track" => true %>
+
   <%= csrf_meta_tags %>
 </head>
-<body>
 
-<%= yield %>
+<body class="<%= params[:controller].split('/')[0] %>">
+<header>
+  <%# render 'layouts/navigation' %>
+</header>
 
+<main role="main">
+  <div id="flash-messages">
+    <%# render 'layouts/messages' %>
+  </div>
+  <%= yield %>
+</main>
+
+<footer id="footer">
+  <div class="container">
+    <p class="text-center">
+      <small>Copyright &copy; <%= Time.now.year %></small>
+    </p>
+
+    <%= debug(params) if Rails.env.development? %>
+  </div>
+</footer>
 </body>
 </html>
