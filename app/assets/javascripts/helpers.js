@@ -69,6 +69,12 @@
 
     var util = SpacePirate.namespace("Util");
 
+    util.makeCallback = function (target, method) {
+        return function () {
+            method.apply(target, arguments);
+        };
+    };
+
     // Iterates through the keys of the object, calling the given function on each (key, value) pair
     util.iterateObject = function(obj, fn, thisArg) {
         if (obj) {

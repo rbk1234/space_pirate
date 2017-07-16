@@ -67,7 +67,7 @@
     }
 
     $(function() {
-        setupWindowResize();
+        //setupWindowResize();
         doDocumentInit();
     });
 }(jQuery));

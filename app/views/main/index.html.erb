@@ -1,10 +1,62 @@
 
-<div class="row main-content">
-  <div class="columns small-12">
-    <h1>Hello!</h1>
-  </div>
-  <div class="columns small-12">
-    <h1>Hello!</h1>
-    <span class="fa fa-fw fa-info-circle"></span>
+
+<div class="row" id="navigation-bar">
+
+</div>
+
+<div class="row row-full main-content">
+  <div class="columns small-24">
+    <div class="row">
+      <div class="columns small-20">
+        <h6>The outer rim</h6>
+      </div>
+      <div class="columns small-4 text-right">
+        <table>
+          <tbody>
+          <tr>
+            <td class="text-right">FPS:</td>
+            <td><span id="fps"></span></td>
+          </tr>
+          <tr>
+            <td class="text-right">Time:</td>
+            <td><span id="total-time"></span></td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="columns small-24" style="font-size:14px;font-family:monospace;">
+        Here is example text
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="small-24 columns canvas-container">
+        <!--<canvas id="background-canvas">Your browser does not support HTML5 Canvas.</canvas>-->
+        <canvas id="main-canvas">Your browser does not support HTML5 Canvas.</canvas>
+        <!--<canvas id="foreground-canvas">Your browser does not support HTML5 Canvas.</canvas>-->
+        <!--<canvas id="hidden-canvas">Your browser does not support HTML5 Canvas.</canvas>-->
+        <div class="row">
+          <div class="columns small-12" style="font-family:monospace;">
+            Health: [//////////---------------] 1200 / 2500<br>
+            Shield: [////////////-------------] &nbsp;300 / &nbsp;720<br>
+            Power: &nbsp;[///////------------------] &nbsp;&nbsp;24 / &nbsp;&nbsp;50<br>
+            <!--<table></table>-->
+          </div>
+          <div class="columns small-12 text-right">
+            <span class="fa fa-fw fa-3x fa-rocket"></span>
+            <span class="fa fa-fw fa-3x fa-bolt"></span>
+            <span class="fa fa-fw fa-3x fa-eye"></span>
+            <span class="fa fa-fw fa-3x fa-diamond"></span>
+          </div>
+        </div>
+      </div>
+      <div class="small-24 columns log-container">
+        <p>Bacon ipsum dolor sit amet venison kevin pastrami, meatloaf rump meatball fatback. Pork loin jerky pancetta, jowl pork belly porchetta filet mignon meatloaf. Meatball spare ribs short ribs tri-tip bresaola, boudin ribeye corned beef kielbasa strip steak tail chuck doner rump ball tip. Sausage bacon turkey andouille pork loin. Porchetta chicken jerky tri-tip biltong frankfurter. Brisket tongue turducken, pancetta jowl tenderloin strip steak chicken ground round frankfurter porchetta meatloaf shankle. Bacon ribeye tongue beef ribs meatball ground round ball tip rump drumstick spare ribs tri-tip.</p>
+      </div>
+    </div>
+
   </div>
 </div>

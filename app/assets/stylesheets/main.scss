@@ -1,0 +1,28 @@
+
+
+
+canvas {
+  //&#background-canvas {
+  //  background: #BFD4DB;
+  //  z-index: 1;
+  //}
+  &#main-canvas {
+    background: #D4A190;
+    //background: #CCCCCC;
+    z-index: 2;
+    outline: 2px solid $dark-grey;
+  }
+  //&#foreground-canvas {
+  //  //background: #A1D490;
+  //  z-index: 3;
+  //}
+  //&#hidden-canvas {
+  //  background: #DADADA;
+  //  left: 650px;
+  //}
+}
+
+
+.canvas-container {
+  position: absolute;
+}
