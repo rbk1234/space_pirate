@@ -43,6 +43,7 @@
             this.context.clearRect(0, 0, this.width(), this.height());
         },
 
+        // TODO Very inefficient to draw one char at a time... draw one line at a time
         drawImage: function(charArray, x, y) {
             x = SpacePirate.Utilities.defaultFor(x, 0);
             y = SpacePirate.Utilities.defaultFor(y, 0);

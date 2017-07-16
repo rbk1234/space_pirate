@@ -69,6 +69,11 @@
 
     var util = SpacePirate.namespace("Utilities");
 
+    util.roundToDecimal = function(num, numDecimals) {
+        var factor = 10 * numDecimals;
+        return Math.round((num + 0.00001) * factor) / factor;
+    };
+
     util.minScreenWidth = function() {
         return parseInt($('.main-content').css('min-width'));
     };

@@ -17,6 +17,7 @@
             SpacePirate.namespace('Global').settings = new SpacePirate.Game.Settings({
                 fontSize: 14
             });
+            SpacePirate.namespace('Global').resources = new SpacePirate.Game.Resources();
 
             this._setupTiming();
             this._setupIO();
@@ -111,8 +112,8 @@
             //    this._player.x += this._player.speed * modifier;
             //}
 
-            this._canvases.main.clear();
-            this._canvases.main.drawImage(this._screen.background);
+            //this._canvases.main.clear();
+            //this._canvases.main.drawImage(this._screen.background);
         },
 
         _eachSecond: function(iterations) {
@@ -122,7 +123,16 @@
             $('#fps').text(fps);
             $('#total-time').text(total);
 
+            SpacePirate.Global.resources.eachSecond(iterations);
+            $('#ore').text(SpacePirate.Global.resources.ore);
+
+            $('#memory').text(SpacePirate.Utilities.roundToDecimal(this._getMemoryUsage(), 2));
+
             // TODO Draw background less often
+        },
+
+        _getMemoryUsage: function() {
+            return performance.memory.usedJSHeapSize / 1048576.0; // in MB
         },
 
         // ---------------------------------------------------------------- Periodic function helpers
