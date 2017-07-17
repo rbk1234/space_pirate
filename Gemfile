@@ -25,7 +25,7 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 gem 'pg', '0.18.2'
 gem 'sass-rails', '5.0.6'
 gem 'jquery-rails', '4.0.4'
-gem 'jquery-ui-rails', '5.0.5'
+gem 'jquery-ui-rails', '6.0.1'
 gem 'uglifier', '2.4.0'
 gem 'turbolinks', '2.5.3'
 gem 'jquery-turbolinks',              '2.1.0'

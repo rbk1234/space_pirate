@@ -27,11 +27,20 @@
         health: function() {
             return this._currentHealth;
         },
+        maxHealth: function() {
+            return this._config.maxHealth; // TODO Based off stamina, etc.
+        },
         shield: function() {
             return this._currentShield;
         },
+        maxShield: function() {
+            return this._config.maxShield; // TODO Based off stamina, etc.
+        },
         energy: function() {
             return this._currentEnergy;
+        },
+        maxEnergy: function() {
+            return this._config.maxEnergy; // TODO Based off intellect, etc.
         },
         dead: function() {
             return this._isDead;
@@ -45,11 +54,12 @@
         },
 
         fullRestore: function() {
-            this._currentHealth = this._config.maxHealth;
-            this._currentShield = this._config.maxShield;
-            this._currentEnergy = this._config.maxEnergy;
+            this._currentHealth = this.maxHealth();
+            this._currentShield = this.maxShield();
+            this._currentEnergy = this.maxEnergy();
 
             SpacePirate.Global.log.logMessage(this._config.name + ' Full restore! Health: '+this.health());
+            this._updateUnitFrame();
         },
 
         dealDamage: function(amount) {
@@ -84,6 +94,23 @@
             if (this._currentHealth <= 0) {
                 this._isDead = true;
                 SpacePirate.Global.log.logMessage(this._config.name + ' Died');
+            }
+
+            this._updateUnitFrame();
+        },
+
+
+        // TODO Is this backwards (should unit attach to unitframe?)
+        attachUnitFrame: function(frame) {
+            this._unitFrame = frame;
+            this._updateUnitFrame();
+        },
+        removeUnitFrame: function() {
+            this._unitFrame = null;
+        },
+        _updateUnitFrame: function() {
+            if (this._unitFrame) {
+                this._unitFrame.update(this);
             }
         }
 

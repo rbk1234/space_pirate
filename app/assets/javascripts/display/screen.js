@@ -13,7 +13,7 @@
         y: 0
     };
 
-    SpacePirate.namespace('IO').Screen = Screen;
+    SpacePirate.namespace('Display').Screen = Screen;
 
     // ---------------------------------------------------------------------------- Screen 1
 
@@ -60,6 +60,6 @@
         collision: []
     });
 
-    SpacePirate.namespace('IO').Screen1 = Screen1;
+    SpacePirate.namespace('Display').Screen1 = Screen1;
 
 }(jQuery));

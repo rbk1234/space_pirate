@@ -11,6 +11,7 @@
  * file per style scope.
  *
  *= require_self
+ *= require jquery-ui/progressbar
  */
 
 @import url(https://fonts.googleapis.com/css?family=Lato:300,400,700);
@@ -20,6 +21,7 @@
 @import "variables"; // Keep Variables First
 
 @import "font";
+@import "progress_bars";
 @import "tables";
 @import "global";
 @import "main";

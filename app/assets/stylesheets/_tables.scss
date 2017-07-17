@@ -7,3 +7,26 @@ table {
     width: 100%;
   }
 }
+
+td.nostretch, th.nostretch {
+  width: 1%;
+  white-space: nowrap;
+}
+
+table.no-rows{
+  margin: 0;
+
+  tbody tr.even,
+  tbody tr:nth-of-type(even),
+  tbody tr.odd,
+  tbody tr:nth-of-type(odd){
+    background: #fff;
+  }
+
+}
+
+table.tight-spacing {
+  tbody tr td {
+    padding: 0.25em 0.25em;
+  }
+}

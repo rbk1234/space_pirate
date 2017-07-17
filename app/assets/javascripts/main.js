@@ -22,6 +22,7 @@
 
             this._setupTiming();
             this._setupIO();
+            this._setupDisplay();
 
             this._setupPlayer();
 
@@ -71,11 +72,13 @@
         _setupIO: function() {
             // ---- keyboard:
             this._keyboard = new SpacePirate.IO.Keyboard();
+        },
 
+        _setupDisplay: function() {
             // ---- canvas:
             var $canvasContainer = $('.canvas-container');
 
-            var mainCanvas = new SpacePirate.IO.Canvas($canvasContainer, {
+            var mainCanvas = new SpacePirate.Display.Canvas($canvasContainer, {
                 canvasId: 'main'
             });
 
@@ -87,18 +90,24 @@
             var $logContainer = $('.log-container');
             var logOffset = mainCanvas.width() + 20;
 
-            SpacePirate.Global.log = new SpacePirate.IO.Log($logContainer, {
+            SpacePirate.Global.log = new SpacePirate.Display.Log($logContainer, {
                 leftOffset: logOffset,
                 minWidth: SpacePirate.Utilities.minScreenWidth() - logOffset,
                 maxHeight: mainCanvas.height(),
                 minHeight: mainCanvas.height()
             });
 
-            // TODO
-            $('.canvas-and-log').css('min-height', mainCanvas.height() + 100);
+            // TODO HACK So that bottom stuff goes below canvas (canvas has absolute position so doesn't affect stuff)
+            $('.canvas-and-log').css('min-height', mainCanvas.height() + 200);
 
             // ---- screen:
-            this._screen = new SpacePirate.IO.Screen1();
+            this._screen = new SpacePirate.Display.Screen1();
+
+            // ---- unit frames:
+            this._playerFrame = new SpacePirate.Display.UnitFrame($('.player-unit-frame'), {
+
+            });
+
         },
 
         _setupPlayer: function() {
@@ -108,6 +117,8 @@
                 maxPower: 20,
                 name: 'Player'
             });
+
+            SpacePirate.Global.player.attachUnitFrame(this._playerFrame);
         },
 
         _gameLoop: function() {

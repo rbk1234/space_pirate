@@ -90,6 +90,6 @@
 
     };
 
-    SpacePirate.namespace('IO').Canvas = Canvas;
+    SpacePirate.namespace('Display').Canvas = Canvas;
 
 }(jQuery));

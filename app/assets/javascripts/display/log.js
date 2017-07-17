@@ -70,6 +70,6 @@
 
     };
 
-    SpacePirate.namespace('IO').Log = Log;
+    SpacePirate.namespace('Display').Log = Log;
 
 }(jQuery));

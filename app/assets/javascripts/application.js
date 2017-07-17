@@ -9,22 +9,25 @@
 //
 // Read Sprockets README (https://github.com/rails/sprockets#sprockets-directives) for details
 // about supported directives.
-//
+
 //= require jquery
 //= require jquery.turbolinks
 //= require jquery_ujs
+//= require jquery-ui/widgets/progressbar
 //= require turbolinks
 
 // Keep namespace first
 //= require utilities/namespace.js
 
+//= require display/canvas.js
+//= require display/log.js
+//= require display/screen.js
+//= require display/unit_frame.js
+
 //= require game/resources.js
 //= require game/settings.js
 
-//= require io/canvas.js
 //= require io/keyboard.js
-//= require io/log.js
-//= require io/screen.js
 
 //= require units/base.js
 //= require units/player.js
