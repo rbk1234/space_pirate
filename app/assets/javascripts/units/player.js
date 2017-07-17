@@ -1,54 +1,20 @@
 
 (function ($) {
 
-    var Player = function() {
-        this._init();
+    var Player = function(config) {
+        SpacePirate.Units.Base.call(this, config);
     };
-    Player.prototype = {
+    Player.prototype = Object.create(SpacePirate.Units.Base.prototype);
+    Player.prototype.constructor = Player;
 
-        _init: function() {
-            this._maxHealth = 100;
-            this._maxShield = 50;
-            this._maxEnergy = 20;
-            this._currentHealth = 0;
-            this._currentShield = 0;
-            this._currentEnergy = 0;
-            this.fullRestore();
-        },
+    $.extend(Player.prototype, {
 
-        fullRestore: function() {
-            this.restoreHealth('full');
-            this.restoreShield('full');
-            this.restoreEnergy('full');
-        },
+        _init: function(config) {
+            SpacePirate.Units.Base.prototype._init.apply(this, arguments);
 
-        restoreHealth: function(amount) {
-            if (amount == 'full') {
-                this._currentHealth = this._maxHealth;
-            }
-            else {
-                this._currentHealth += amount;
-            }
-        },
-
-        restoreShield: function(amount) {
-            if (amount == 'full') {
-                this._currentShield = this._maxShield;
-            }
-            else {
-                this._currentShield += amount;
-            }
-        },
-
-        restoreEnergy: function(amount) {
-            if (amount == 'full') {
-                this._currentEnergy = this._maxEnergy;
-            }
-            else {
-                this._currentEnergy += amount;
-            }
         }
-    };
+
+    });
 
     SpacePirate.namespace('Units').Player = Player;
 

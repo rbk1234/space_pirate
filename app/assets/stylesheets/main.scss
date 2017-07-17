@@ -24,5 +24,10 @@ canvas {
 
 
 .canvas-container {
+  z-index: 2; // Keep above log-container so don't catch scroll events
   position: absolute;
+}
+
+.log-container {
+  overflow-y: scroll;
 }

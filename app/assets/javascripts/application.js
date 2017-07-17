@@ -26,6 +26,7 @@
 //= require io/log.js
 //= require io/screen.js
 
+//= require units/base.js
 //= require units/player.js
 
 //= require utilities/helpers.js

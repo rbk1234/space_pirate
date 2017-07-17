@@ -14,13 +14,16 @@
 
         _init: function() {
             // Store Game Settings globally
-            SpacePirate.namespace('Global').settings = new SpacePirate.Game.Settings({
+            SpacePirate.namespace('Global'); // Init Global namespace
+            SpacePirate.Global.settings = new SpacePirate.Game.Settings({
                 fontSize: 14
             });
-            SpacePirate.namespace('Global').resources = new SpacePirate.Game.Resources();
+            SpacePirate.Global.resources = new SpacePirate.Game.Resources();
 
             this._setupTiming();
             this._setupIO();
+
+            this._setupPlayer();
 
             this._createPeriodicFn(SpacePirate.Utilities.makeCallback(this, this._eachSecond), 1000);
             this._run();
@@ -84,19 +87,33 @@
             var $logContainer = $('.log-container');
             var logOffset = mainCanvas.width() + 20;
 
-            this._log = new SpacePirate.IO.Log($logContainer, {
+            SpacePirate.Global.log = new SpacePirate.IO.Log($logContainer, {
                 leftOffset: logOffset,
-                minWidth: SpacePirate.Utilities.minScreenWidth() - logOffset
+                minWidth: SpacePirate.Utilities.minScreenWidth() - logOffset,
+                maxHeight: mainCanvas.height(),
+                minHeight: mainCanvas.height()
             });
+
+            // TODO
+            $('.canvas-and-log').css('min-height', mainCanvas.height() + 100);
 
             // ---- screen:
             this._screen = new SpacePirate.IO.Screen1();
         },
 
+        _setupPlayer: function() {
+            SpacePirate.Global.player = new SpacePirate.Units.Player({
+                maxHealth: 200,
+                maxShield: 50,
+                maxPower: 20,
+                name: 'Player'
+            });
+        },
+
         _gameLoop: function() {
             this._iteratePeriodicFns();
 
-            var modifier = this._timing.delta / 1000;
+            var modifier = this._timing.delta / 1000; // Multiply values by this modifier so things are consistent despite lag
 
             //var keysDown = this._keyboard.keysDown;
             //if (38 in keysDown) { // Player holding up
@@ -127,6 +144,8 @@
             $('#ore').text(SpacePirate.Global.resources.ore);
 
             $('#memory').text(SpacePirate.Utilities.roundToDecimal(this._getMemoryUsage(), 2));
+
+            //SpacePirate.Global.player.dealDamage(1);
 
             // TODO Draw background less often
         },
