@@ -26,6 +26,7 @@
 
 //= require game/resources.js
 //= require game/settings.js
+//= require game/statistics.js
 
 //= require io/keyboard.js
 

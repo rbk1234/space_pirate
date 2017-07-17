@@ -19,6 +19,7 @@
                 fontSize: 14
             });
             SpacePirate.Global.resources = new SpacePirate.Game.Resources();
+            SpacePirate.Global.statistics = new SpacePirate.Game.Statistics();
 
             this._setupTiming();
             this._setupIO();
@@ -99,6 +100,8 @@
 
             // TODO HACK So that bottom stuff goes below canvas (canvas has absolute position so doesn't affect stuff)
             $('.canvas-and-log').css('min-height', mainCanvas.height() + 200);
+
+            SpacePirate.Global.log.logMessage('Log initialized.');
 
             // ---- screen:
             this._screen = new SpacePirate.Display.Screen1();

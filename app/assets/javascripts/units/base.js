@@ -49,17 +49,20 @@
         respawn: function() {
             if (this._isDead) {
                 this._isDead = false;
+                SpacePirate.Global.log.logMessage(this._config.name + ' Respawned');
                 this.fullRestore();
             }
         },
 
+        // Note: Will not heal you if you are dead
         fullRestore: function() {
-            this._currentHealth = this.maxHealth();
-            this._currentShield = this.maxShield();
-            this._currentEnergy = this.maxEnergy();
+            if (!this._isDead) {
+                this._currentHealth = this.maxHealth();
+                this._currentShield = this.maxShield();
+                this._currentEnergy = this.maxEnergy();
 
-            SpacePirate.Global.log.logMessage(this._config.name + ' Full restore! Health: '+this.health());
-            this._updateUnitFrame();
+                this._updateUnitFrame();
+            }
         },
 
         dealDamage: function(amount) {
@@ -92,11 +95,16 @@
             SpacePirate.Global.log.logMessage(this._config.name + damageTakenString);
 
             if (this._currentHealth <= 0) {
-                this._isDead = true;
-                SpacePirate.Global.log.logMessage(this._config.name + ' Died');
+                this._kill();
             }
 
             this._updateUnitFrame();
+        },
+
+        _kill: function() {
+            this._isDead = true;
+            this._currentHealth = 0;
+            SpacePirate.Global.log.logMessage(this._config.name + ' Died');
         },
 
 

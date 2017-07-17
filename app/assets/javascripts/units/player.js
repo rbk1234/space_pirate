@@ -12,6 +12,12 @@
         _init: function(config) {
             SpacePirate.Units.Base.prototype._init.apply(this, arguments);
 
+        },
+
+        _kill: function() {
+            SpacePirate.Units.Base.prototype._kill.apply(this, arguments);
+
+            SpacePirate.Global.statistics.countPlayerDeath();
         }
 
     });
