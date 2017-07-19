@@ -69,6 +69,15 @@
 
     var util = SpacePirate.namespace("Utilities");
 
+    util.getMemoryUsage = function() {
+        if (performance && performance.memory) {
+            return performance.memory.usedJSHeapSize / 1048576.0; // in MB
+        }
+        else {
+            return -1;
+        }
+    };
+
     util.roundToDecimal = function(num, numDecimals) {
         var factor = 10 * numDecimals;
         return Math.round((num + 0.00001) * factor) / factor;

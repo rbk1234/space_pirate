@@ -18,6 +18,21 @@
             SpacePirate.Units.Base.prototype._kill.apply(this, arguments);
 
             SpacePirate.Global.statistics.countPlayerDeath();
+        },
+
+        image: function() {
+            return [
+                ' [>  ',
+                '/==;-',
+                ' /\\  '
+            ];
+        },
+        collision: function() {
+            return [
+                ' XX  ',
+                ' XX  ',
+                ' XX  '
+            ];
         }
 
     });

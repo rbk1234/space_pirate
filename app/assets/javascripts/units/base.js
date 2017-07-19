@@ -27,21 +27,27 @@
         health: function() {
             return this._currentHealth;
         },
+
         maxHealth: function() {
             return this._config.maxHealth; // TODO Based off stamina, etc.
         },
+
         shield: function() {
             return this._currentShield;
         },
+
         maxShield: function() {
             return this._config.maxShield; // TODO Based off stamina, etc.
         },
+
         energy: function() {
             return this._currentEnergy;
         },
+
         maxEnergy: function() {
             return this._config.maxEnergy; // TODO Based off intellect, etc.
         },
+
         dead: function() {
             return this._isDead;
         },
@@ -113,9 +119,11 @@
             this._unitFrame = frame;
             this._updateUnitFrame();
         },
+
         removeUnitFrame: function() {
             this._unitFrame = null;
         },
+
         _updateUnitFrame: function() {
             if (this._unitFrame) {
                 this._unitFrame.update(this);

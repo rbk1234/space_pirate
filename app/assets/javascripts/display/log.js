@@ -8,12 +8,7 @@
     Log.prototype = {
         _dynamicScrolling: null, // If true, keeps the div scrolled to top
 
-        _defaultConfig: {
-            leftOffset: 0,
-            minWidth: 0,
-            maxHeight: 0,
-            minHeight: 0
-        },
+        _defaultConfig: {},
 
         _init: function(config) {
             var self = this;
@@ -25,11 +20,6 @@
                 return false;
             }
 
-            this._$container.css('padding-left', this._config.leftOffset)
-                .css('min-width', this._config.minWidth)
-                .css('max-height', this._config.maxHeight)
-                .css('min-height', this._config.minHeight);
-
             this._dynamicScrolling = true;
 
             this._$container.off('scroll').on('scroll', function() {
@@ -40,6 +30,17 @@
                     self._dynamicScrolling = true;
                 }
             });
+        },
+
+        positionToRightOfFrame: function(frame) {
+            // Note: Frame must respond to width() and height()
+
+            var leftOffset = frame.width() + 20;
+
+            this._$container.css('padding-left', leftOffset)
+                .css('min-width', SpacePirate.Utilities.minScreenWidth() - leftOffset)
+                .css('max-height', frame.height())
+                .css('min-height', frame.height());
         },
 
         clear: function() {

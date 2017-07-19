@@ -43,8 +43,7 @@
             this.context.clearRect(0, 0, this.width(), this.height());
         },
 
-        // TODO Very inefficient to draw one char at a time... draw one line at a time
-        drawImage: function(charArray, x, y) {
+        drawImage_old: function(charArray, x, y) {
             x = SpacePirate.Utilities.defaultFor(x, 0);
             y = SpacePirate.Utilities.defaultFor(y, 0);
             y += (SpacePirate.Global.settings.fontHeight() - 2); // Move down one row. Move up a tiny bit.
@@ -55,6 +54,29 @@
                         charArray[row][col],
                         x + col * SpacePirate.Global.settings.fontWidth(),
                         y + row * SpacePirate.Global.settings.fontHeight()
+                    );
+                }
+            }
+        },
+
+        // TODO Very inefficient to draw one char at a time... draw one line at a time
+        drawImage: function(charArray, x, y) {
+            x = SpacePirate.Utilities.defaultFor(x, 0);
+            y = SpacePirate.Utilities.defaultFor(y, 0);
+
+            x = Math.round(x);
+            y = Math.round(y);
+
+            var scaledX = x * SpacePirate.Global.settings.fontWidth();
+            var scaledY = y * SpacePirate.Global.settings.fontHeight();
+            scaledY += (SpacePirate.Global.settings.fontHeight() - 2); // Move down one row. Move up a tiny bit.
+
+            for (var row = 0; row < charArray.length; row++) {
+                for (var col = 0; col < charArray[row].length; col++) {
+                    this.context.fillText(
+                        charArray[row][col],
+                        scaledX + col * SpacePirate.Global.settings.fontWidth(),
+                        scaledY + row * SpacePirate.Global.settings.fontHeight()
                     );
                 }
             }

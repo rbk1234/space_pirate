@@ -16,14 +16,16 @@
 //= require jquery-ui/widgets/progressbar
 //= require turbolinks
 
-// Keep namespace first
+// Keep these first
 //= require utilities/namespace.js
+//= require game/constants.js
 
 //= require display/canvas.js
 //= require display/log.js
-//= require display/screen.js
+//= require levels/level_01.js
 //= require display/unit_frame.js
 
+//= require game/level_engine.js
 //= require game/resources.js
 //= require game/settings.js
 //= require game/statistics.js

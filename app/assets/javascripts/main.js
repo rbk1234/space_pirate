@@ -6,27 +6,24 @@
     };
 
     Main.prototype = {
-        _timing: null,
-        _canvases: null,
-
-        _screen: null,
-        _keyboard: null,
 
         _init: function() {
             // Store Game Settings globally
             SpacePirate.namespace('Global'); // Init Global namespace
+            SpacePirate.Global.resources = new SpacePirate.Game.Resources();
             SpacePirate.Global.settings = new SpacePirate.Game.Settings({
                 fontSize: 14
             });
-            SpacePirate.Global.resources = new SpacePirate.Game.Resources();
             SpacePirate.Global.statistics = new SpacePirate.Game.Statistics();
 
             this._setupTiming();
             this._setupIO();
-            this._setupDisplay();
-
             this._setupPlayer();
+            this._setupPlayerFrame();
+            this._setupLevel();
+            this._setupLog();
 
+            this._createPeriodicFn(SpacePirate.Utilities.makeCallback(this, this._everyTenthOfASecond), 33.333);
             this._createPeriodicFn(SpacePirate.Utilities.makeCallback(this, this._eachSecond), 1000);
             this._run();
         },
@@ -71,80 +68,56 @@
         },
 
         _setupIO: function() {
-            // ---- keyboard:
             this._keyboard = new SpacePirate.IO.Keyboard();
         },
 
-        _setupDisplay: function() {
-            // ---- canvas:
-            var $canvasContainer = $('.canvas-container');
-
-            var mainCanvas = new SpacePirate.Display.Canvas($canvasContainer, {
-                canvasId: 'main'
-            });
-
-            this._canvases = {
-                main: mainCanvas
-            };
-
-            // ---- log:
-            var $logContainer = $('.log-container');
-            var logOffset = mainCanvas.width() + 20;
-
-            SpacePirate.Global.log = new SpacePirate.Display.Log($logContainer, {
-                leftOffset: logOffset,
-                minWidth: SpacePirate.Utilities.minScreenWidth() - logOffset,
-                maxHeight: mainCanvas.height(),
-                minHeight: mainCanvas.height()
-            });
-
-            // TODO HACK So that bottom stuff goes below canvas (canvas has absolute position so doesn't affect stuff)
-            $('.canvas-and-log').css('min-height', mainCanvas.height() + 200);
-
-            SpacePirate.Global.log.logMessage('Log initialized.');
-
-            // ---- screen:
-            this._screen = new SpacePirate.Display.Screen1();
-
-            // ---- unit frames:
-            this._playerFrame = new SpacePirate.Display.UnitFrame($('.player-unit-frame'), {
-
-            });
-
-        },
-
         _setupPlayer: function() {
-            SpacePirate.Global.player = new SpacePirate.Units.Player({
+            this._player = new SpacePirate.Units.Player({
                 maxHealth: 200,
                 maxShield: 50,
                 maxPower: 20,
                 name: 'Player'
             });
 
-            SpacePirate.Global.player.attachUnitFrame(this._playerFrame);
+            SpacePirate.Global.player = this._player;
+        },
+
+        _setupPlayerFrame: function() {
+            var playerFrame = new SpacePirate.Display.UnitFrame($('.player-unit-frame'), {});
+            this._player.attachUnitFrame(playerFrame);
+        },
+
+        _setupLevel: function() {
+            this._levelEngine = new SpacePirate.Game.LevelEngine({});
+            this._levelEngine.loadLevel(SpacePirate.Levels.Level1);
+
+            this._levelEngine.addUnit(this._player, 0, 0);
+        },
+
+        _setupLog: function() {
+            // Note: Depends on the level being instantiated so it can offset correctly
+
+            SpacePirate.Global.log = new SpacePirate.Display.Log($('.log-container'));
+            SpacePirate.Global.log.positionToRightOfFrame(this._levelEngine);
+            SpacePirate.Global.log.logMessage('Log initialized.');
+
+            // TODO HACK So that bottom stuff goes below canvas (canvas has absolute position so doesn't affect stuff)
+            $('.canvas-and-log').css('min-height', this._levelEngine.height() + 200);
         },
 
         _gameLoop: function() {
             this._iteratePeriodicFns();
 
-            var modifier = this._timing.delta / 1000; // Multiply values by this modifier so things are consistent despite lag
-
+            //var modifier = this._timing.delta / 1000; // Multiply values by this modifier so things are consistent despite lag
+            //
             //var keysDown = this._keyboard.keysDown;
             //if (38 in keysDown) { // Player holding up
             //    this._player.y -= this._player.speed * modifier;
             //}
-            //if (40 in keysDown) { // Player holding down
-            //    this._player.y += this._player.speed * modifier;
-            //}
-            //if (37 in keysDown) { // Player holding left
-            //    this._player.x -= this._player.speed * modifier;
-            //}
-            //if (39 in keysDown) { // Player holding right
-            //    this._player.x += this._player.speed * modifier;
-            //}
+        },
 
-            //this._canvases.main.clear();
-            //this._canvases.main.drawImage(this._screen.background);
+        _everyTenthOfASecond: function(iterations) {
+            this._levelEngine.run(iterations);
         },
 
         _eachSecond: function(iterations) {
@@ -157,15 +130,7 @@
             SpacePirate.Global.resources.eachSecond(iterations);
             $('#ore').text(SpacePirate.Global.resources.ore);
 
-            $('#memory').text(SpacePirate.Utilities.roundToDecimal(this._getMemoryUsage(), 2));
-
-            //SpacePirate.Global.player.dealDamage(1);
-
-            // TODO Draw background less often
-        },
-
-        _getMemoryUsage: function() {
-            return performance.memory.usedJSHeapSize / 1048576.0; // in MB
+            $('#memory').text(SpacePirate.Utilities.roundToDecimal(SpacePirate.Utilities.getMemoryUsage(), 2));
         },
 
         // ---------------------------------------------------------------- Periodic function helpers
