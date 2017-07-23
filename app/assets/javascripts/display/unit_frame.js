@@ -38,6 +38,7 @@
             $bar.find('.ui-progressbar-value').height($bar.height());
 
             return {
+                $row: $row,
                 $bar: $bar,
                 $text: $row.find('.status-text')
             }
@@ -50,9 +51,15 @@
 
         _updateRow: function(row, newValue, newMax) {
             if (row) {
-                row.$bar.progressbar('option', 'max', newMax);
-                row.$bar.progressbar('option', 'value', newValue);
-                row.$text.text(newValue + ' / ' + newMax);
+                if (newMax === 0 || newMax === undefined) {
+                    row.$row.hide();
+                }
+                else {
+                    row.$row.show();
+                    row.$bar.progressbar('option', 'max', newMax);
+                    row.$bar.progressbar('option', 'value', newValue);
+                    row.$text.text(newValue + ' / ' + newMax);
+                }
             }
         }
 

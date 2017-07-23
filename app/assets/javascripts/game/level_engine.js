@@ -48,10 +48,14 @@
 
         _calculateLevelUpdates: function() {
             var self = this;
+            //SpacePirate.Global.log.logMessage('tick');
 
             this._units.forEach(function(unit) {
-                self._moveUnit(unit);
+                self._unitMove(unit);
+                self._unitAttack(unit);
             });
+
+            this._clearDeadUnits();
         },
 
         _drawLevel: function() {
@@ -68,7 +72,15 @@
             });
         },
 
-        _moveUnit: function(unit) {
+        _clearDeadUnits: function() {
+            for (var i = this._units.length - 1; i >= 0; i--) {
+                if (this._units[i].isDead) {
+                    this._units.splice(i, 1);
+                }
+            }
+        },
+
+        _unitMove: function(unit) {
             var deltaX = unit.moveSpeed();
             var deltaY = SpacePirate.Game.Constants.gravity;
 
@@ -168,6 +180,54 @@
         },
 
 
+        _unitAttack: function(attacker) {
+            if (!attacker.hasAttack()) {
+                return;
+            }
+
+            if (attacker.attackReady === undefined) {
+                attacker.attackReady = 1.0;
+            }
+            if (attacker.attackReady >= 1.0) {
+                var enemy = this._enemyInRange(attacker);
+
+                if (enemy) {
+                    //SpacePirate.Global.log.logMessage('attack!');
+                    enemy.dealDamage(attacker.attackDamage());
+                    attacker.attackReady = 0;
+                }
+            }
+
+            attacker.attackReady += attacker.attackSpeed();
+        },
+
+        _enemyInRange: function(attacker) {
+            var from = attacker.attackXY();
+            var range = attacker.attackRange();
+
+            var projectile = {
+                x: attacker.x + from[0],
+                y: attacker.y + from[1],
+                collision: function(){
+                    return [['X']];
+                }
+            };
+
+            var currentDistance = 0;
+            while (currentDistance <= range) {
+                for (var i = 0, len = this._units.length; i < len; i++) {
+                    var otherUnit = this._units[i];
+                    if (attacker.team !== otherUnit.team && this._isColliding(projectile, otherUnit)) {
+                        return otherUnit;
+                    }
+                }
+
+                projectile.x += 1;
+                currentDistance++;
+            }
+
+            return false;
+        },
 
 
 

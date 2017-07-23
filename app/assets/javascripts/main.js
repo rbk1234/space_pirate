@@ -19,7 +19,7 @@
             this._setupTiming();
             this._setupIO();
             this._setupPlayer();
-            this._setupPlayerFrame();
+            this._setupFrames();
             this._setupLevel();
             this._setupLog();
 
@@ -72,19 +72,16 @@
         },
 
         _setupPlayer: function() {
-            this._player = new SpacePirate.Units.Player({
-                maxHealth: 200,
-                maxShield: 50,
-                maxPower: 20,
-                name: 'Player'
-            });
+            this._player = new SpacePirate.Units.Player();
 
             SpacePirate.Global.player = this._player;
         },
 
-        _setupPlayerFrame: function() {
+        _setupFrames: function() {
             var playerFrame = new SpacePirate.Display.UnitFrame($('.player-unit-frame'), {});
             this._player.attachUnitFrame(playerFrame);
+
+            this._enemyFrame = new SpacePirate.Display.UnitFrame($('.enemy-unit-frame'), {});
         },
 
         _setupLevel: function() {
@@ -95,6 +92,8 @@
 
             var alien = new SpacePirate.Units.Alien_01();
             this._levelEngine.addUnit(alien, 40, 21);
+            this._levelEngine.addUnit(new SpacePirate.Units.Alien_01(), 60, 21);
+            alien.attachUnitFrame(this._enemyFrame);
         },
 
         _setupLog: function() {

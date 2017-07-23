@@ -7,27 +7,22 @@
         this._init(config);
     };
     Base.prototype = {
-        _defaultConfig: {
-            maxHealth: 100,
-            maxShield: 0,
-            maxEnergy: 0,
-            name: 'Unknown'
-        },
-
         id: null,
-        _isDead: null,
+        isDead: null,
         _currentHealth: null,
         _currentShield: null,
-        _currentEnergy: null,
+        _currentPower: null,
 
         _init: function(config) {
-            this._config = $.extend({}, this._defaultConfig, config);
-
             this.id = currentId;
             currentId++;
+            this.team = SpacePirate.Game.Constants.enemyTeam;
 
-            this._isDead = false;
-            this.fullRestore();
+            this.isDead = false;
+        },
+
+        name: function() {
+            return this._name || 'Unknown';
         },
 
         health: function() {
@@ -35,7 +30,7 @@
         },
 
         maxHealth: function() {
-            return this._config.maxHealth; // TODO Based off stamina, etc.
+            return this._maxHealth || 1; // TODO Based off stamina, etc.
         },
 
         shield: function() {
@@ -43,42 +38,65 @@
         },
 
         maxShield: function() {
-            return this._config.maxShield; // TODO Based off stamina, etc.
+            return this._maxShield; // TODO Based off stamina, etc.
         },
 
-        energy: function() {
-            return this._currentEnergy;
+        power: function() {
+            return this._currentPower;
         },
 
-        maxEnergy: function() {
-            return this._config.maxEnergy; // TODO Based off intellect, etc.
+        maxPower: function() {
+            return this._maxPower; // TODO Based off intellect, etc.
         },
 
-        dead: function() {
-            return this._isDead;
+        hasAttack: function() {
+            return this._hasAttack || false;
+        },
+        attackXY: function() {
+            return this._attackXY || [0,0];
+        },
+        moveSpeed: function() {
+            return this._moveSpeed || 0;
+        },
+        attackSpeed: function() {
+            return this._attackSpeed || 0;
+        },
+        attackRange: function() {
+            return this._attackRange || 0;
+        },
+        attackDamage: function() {
+            return this._attackDamage || 0;
+        },
+
+        image: function() {
+            return this._image || [[]];
+        },
+
+        collision: function() {
+            return this._collision || [[]];
         },
 
         respawn: function() {
-            if (this._isDead) {
-                this._isDead = false;
-                SpacePirate.Global.log.logMessage(this._config.name + ' Respawned');
+            if (this.isDead()) {
+                this.isDead = false;
+                SpacePirate.Global.log.logMessage(this.name() + ' Respawned');
                 this.fullRestore();
             }
         },
 
         // Note: Will not heal you if you are dead
         fullRestore: function() {
-            if (!this._isDead) {
+            if (!this.isDead) {
                 this._currentHealth = this.maxHealth();
                 this._currentShield = this.maxShield();
-                this._currentEnergy = this.maxEnergy();
+                this._currentPower = this.maxPower();
 
                 this._updateUnitFrame();
             }
         },
 
         dealDamage: function(amount) {
-            if (this._isDead) {
+            if (this.isDead) {
                 return;
             }
 
@@ -104,7 +122,7 @@
             if (amount > 0) {
                 damageTakenString += ' (' + amount + ' overkill)';
             }
-            SpacePirate.Global.log.logMessage(this._config.name + damageTakenString);
+            SpacePirate.Global.log.logMessage(this.name() + damageTakenString);
 
             if (this._currentHealth <= 0) {
                 this._kill();
@@ -114,9 +132,9 @@
         },
 
         _kill: function() {
-            this._isDead = true;
+            this.isDead = true;
             this._currentHealth = 0;
-            SpacePirate.Global.log.logMessage(this._config.name + ' Died');
+            SpacePirate.Global.log.logMessage(this.name() + ' Died');
         },
 
 

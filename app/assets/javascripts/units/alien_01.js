@@ -10,27 +10,25 @@
     $.extend(Alien_01.prototype, {
 
         _init: function(config) {
-            //console.log(arguments);
             SpacePirate.Units.Base.prototype._init.apply(this, arguments);
-        },
 
-        image: function() {
-            return [
+            this._image = [
                 ' <> ',
                 's{}s',
                 ' ^^ '
-            ]
-        },
-        collision: function() {
-            return [
+            ];
+            this._collision = [
                 ' XX ',
                 'XXXX',
                 ' XX '
             ];
-        },
 
-        moveSpeed: function() {
-            return -1.0;
+            this._moveSpeed = -1;
+            this._maxHealth = 100;
+
+            this._name = 'Alien';
+
+            this.fullRestore();
         }
 
     });
