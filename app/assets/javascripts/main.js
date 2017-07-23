@@ -23,7 +23,7 @@
             this._setupLevel();
             this._setupLog();
 
-            this._createPeriodicFn(SpacePirate.Utilities.makeCallback(this, this._runLevel), 1000 / SpacePirate.Game.Constants.levelFps);
+            this._createPeriodicFn(SpacePirate.Utilities.makeCallback(this, this._runLevel), 1000 / SpacePirate.Game.Constants.gameTicksPerSecond);
             this._createPeriodicFn(SpacePirate.Utilities.makeCallback(this, this._eachSecond), 1000);
             this._run();
         },

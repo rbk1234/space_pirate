@@ -17,6 +17,7 @@
             this.id = currentId;
             currentId++;
             this.team = SpacePirate.Game.Constants.enemyTeam;
+            this._direction = -1;
 
             this.isDead = false;
         },
@@ -56,7 +57,7 @@
             return this._attackXY || [0,0];
         },
         moveSpeed: function() {
-            return this._moveSpeed || 0;
+            return (this._moveSpeed || 0) * this.direction();
         },
         attackSpeed: function() {
             return this._attackSpeed || 0;
@@ -66,6 +67,10 @@
         },
         attackDamage: function() {
             return this._attackDamage || 0;
+        },
+
+        direction: function() {
+            return this._direction;
         },
 
         image: function() {

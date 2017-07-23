@@ -51,9 +51,11 @@
             //SpacePirate.Global.log.logMessage('tick');
 
             this._units.forEach(function(unit) {
-                self._unitMove(unit);
+                if (unit.team !== SpacePirate.Game.Constants.playerTeam || !this._enemyInRange(unit)) {
+                    self._unitMove(unit);
+                }
                 self._unitAttack(unit);
-            });
+            }, this);
 
             this._clearDeadUnits();
         },
@@ -208,6 +210,7 @@
             var projectile = {
                 x: attacker.x + from[0],
                 y: attacker.y + from[1],
+                direction: attacker.direction(),
                 collision: function(){
                     return [['X']];
                 }
@@ -222,7 +225,7 @@
                     }
                 }
 
-                projectile.x += 1;
+                projectile.x += projectile.direction;
                 currentDistance++;
             }
 

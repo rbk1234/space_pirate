@@ -15,7 +15,7 @@
             this.team = SpacePirate.Game.Constants.playerTeam;
 
             this._hasAttack = true;
-            this._moveSpeed = 0;
+            this._moveSpeed = 1;
             this._attackSpeed = 0.25;
             this._attackRange = 20;
             this._attackDamage = 30;
@@ -25,6 +25,8 @@
             this._maxShield = 50;
             this._maxPower = 20;
             this._name = 'Player';
+
+            this._direction = 1;
 
             this._image = [
                 ' [>  ',
