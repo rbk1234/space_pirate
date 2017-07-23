@@ -1,6 +1,8 @@
 
 (function ($) {
 
+    var currentId = 1;
+
     var Base = function(config) {
         this._init(config);
     };
@@ -12,6 +14,7 @@
             name: 'Unknown'
         },
 
+        id: null,
         _isDead: null,
         _currentHealth: null,
         _currentShield: null,
@@ -19,6 +22,9 @@
 
         _init: function(config) {
             this._config = $.extend({}, this._defaultConfig, config);
+
+            this.id = currentId;
+            currentId++;
 
             this._isDead = false;
             this.fullRestore();

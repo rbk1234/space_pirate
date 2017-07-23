@@ -61,11 +61,8 @@
 
         // TODO Very inefficient to draw one char at a time... draw one line at a time
         drawImage: function(charArray, x, y) {
-            x = SpacePirate.Utilities.defaultFor(x, 0);
-            y = SpacePirate.Utilities.defaultFor(y, 0);
-
-            x = Math.round(x);
-            y = Math.round(y);
+            x = Math.round(SpacePirate.Utilities.defaultFor(x, 0));
+            y = Math.round(SpacePirate.Utilities.defaultFor(y, 0));
 
             var scaledX = x * SpacePirate.Global.settings.fontWidth();
             var scaledY = y * SpacePirate.Global.settings.fontHeight();

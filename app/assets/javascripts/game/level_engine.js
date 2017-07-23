@@ -31,11 +31,9 @@
         },
 
         addUnit: function(unit, x, y) {
-            this._units.push({
-                unit: unit,
-                x: x,
-                y: y
-            });
+            unit.x = x;
+            unit.y = y;
+            this._units.push(unit);
         },
 
         run: function(iterations) {
@@ -48,56 +46,11 @@
             this._drawLevel();
         },
 
-        _isColliding: function(unitCollision, unitX, unitY) {
-            unitX = Math.round(unitX);
-            unitY = Math.round(unitY);
-
-            for (var row = 0; row < unitCollision.length; row++) {
-                for (var col = 0; col < unitCollision[row].length; col++) {
-                    // TODO just basing off of level image
-                    if (unitCollision[row][col] === 'X' && this._level.image[row + unitY][col + unitX] === 'X') {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        },
-
         _calculateLevelUpdates: function() {
             var self = this;
 
             this._units.forEach(function(unit) {
-                // 1. Cache initial x and y
-                var initialX = unit.x;
-                var initialY = unit.y;
-
-                // 2. Apply x and y changes
-                unit.y += SpacePirate.Game.Constants.gravity;
-                unit.x += SpacePirate.Game.Constants.gravity;
-
-                // 3. Calculate direction / potential rebound
-                var movingRight = unit.x - initialX > 0; // x delta > 0
-                var movingDown = unit.y - initialY > 0; // y delta > 0
-
-                // 4. Check for collisions
-                //console.log('moving down? '+movingDown);
-
-                var unitCollision = unit.unit.collision();
-                if (self._isColliding(unitCollision, unit.x, unit.y)) {
-                    //console.log('collision');
-
-                    // try move up
-                    unit.y += (movingDown ? -1 : 1);
-                    if (self._isColliding(unitCollision, unit.x, unit.y)) {
-                        // move back down, then try move left
-                        unit.y -= (movingDown ? -1 : 1);
-                        unit.x += (movingRight ? -1 : 1);
-                        if (self._isColliding(unitCollision, unit.x, unit.y)) {
-                            // if still colliding, then move up and left
-                            unit.y += (movingDown ? -1 : 1);
-                        }
-                    }
-                }
+                self._moveUnit(unit);
             });
         },
 
@@ -107,16 +60,112 @@
             this._canvases.main.clear();
 
             if (this._level) {
-                this._canvases.main.drawImage(this._level.image);
+                this._canvases.main.drawImage(this._level.image());
             }
 
-            this._units.forEach(function(unit) { // TODO unit.unit is bad
-                self._canvases.main.drawImage(unit.unit.image(), unit.x, unit.y);
+            this._units.forEach(function(unit) {
+                self._canvases.main.drawImage(unit.image(), unit.x, unit.y);
             });
         },
 
+        _moveUnit: function(unit) {
+            var deltaX = unit.moveSpeed();
+            var deltaY = SpacePirate.Game.Constants.gravity;
+
+            if (deltaX === 0 && deltaY === 0) {
+                return; // Not moving
+            }
+
+            var numSteps = (Math.max(Math.abs(deltaX), Math.abs(deltaY)));
+            var stepX = deltaX / numSteps;
+            var stepY = deltaY / numSteps;
+
+            var allowMoveX = true;
+            var allowMoveY = true;
+            var numStepsX = 0;
+            var numStepsY = 0;
+
+            while (allowMoveX || allowMoveY) {
+                if (allowMoveX) {
+                    unit.x += stepX;
+                    numStepsX++;
+
+                    if (this._isColliding(unit, this._level) || this._isCollidingWithUnits(unit)) {
+                        unit.x -= stepX;
+                        allowMoveX = false;
+                    }
+
+                    if (numStepsX >= numSteps) {
+                        allowMoveX = false;
+                    }
+                }
+
+                if (allowMoveY) {
+                    unit.y += stepY;
+                    numStepsY++;
+
+                    if (this._isColliding(unit, this._level) || this._isCollidingWithUnits(unit)) {
+                        unit.y -= stepY;
+                        allowMoveY = false;
+                    }
+
+                    if (numStepsY >= numSteps) {
+                        allowMoveY = false;
+                    }
+                }
+            }
+        },
+
+        // x,y are rows/columns, but they can have decimals
+        // obj can be a level, user, projectile, etc. Has to respond to x, y, and collision()
+        _isColliding: function(obj1, obj2) {
+            var obj1_collision = obj1.collision();
+            var obj2_collision = obj2.collision();
+            //
+            //var smallerObj;
+            //var largerObj;
+            //
+            //if (obj1_collision.length * obj1_collision[0].length < obj2_collision.length * obj2_collision[0].length) {
+            //    smallerObj = obj1;
+            //    largerObj = obj2;
+            //}
+            //else {
+            //    smallerObj = obj2;
+            //    largerObj = obj1;
+            //}
+
+            var obj1_x = Math.round(obj1.x || 0);
+            var obj1_y = Math.round(obj1.y || 0);
+            var obj2_x = Math.round(obj2.x || 0);
+            var obj2_y = Math.round(obj2.y || 0);
 
 
+            // first check
+            // if 1_image || 2_image || (1_top > 2_bottom && 2_top > 1_bottom && 1_right > 2_left && 2_right > 1_left)
+            //   iterate thru smaller obj collision
+            // TODO assuming obj1 is smaller
+            for (var row = 0; row < obj1_collision.length; row++) {
+                for (var col = 0; col < obj1_collision[row].length; col++) {
+                    if (obj1_collision[row][col] === 'X' && obj2_collision[row + obj1_y - obj2_y] &&
+                        obj2_collision[row + obj1_y - obj2_y][col + obj1_x - obj2_x] === 'X') {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        },
+
+        _isCollidingWithUnits: function(unit) {
+            for (var i = 0, len = this._units.length; i < len; i++) {
+                var otherUnit = this._units[i];
+                if (unit.id !== otherUnit.id && this._isColliding(unit, otherUnit)) {
+                    return true;
+                }
+            }
+
+            return false;
+        },
 
 
 

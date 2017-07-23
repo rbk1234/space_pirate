@@ -2,7 +2,8 @@
 (function ($) {
 
     SpacePirate.namespace('Game').Constants = {
-        gravity: 0.2
+        levelFps: 1,
+        gravity: 1.0
     };
 
 }(jQuery));

@@ -23,7 +23,7 @@
             this._setupLevel();
             this._setupLog();
 
-            this._createPeriodicFn(SpacePirate.Utilities.makeCallback(this, this._everyTenthOfASecond), 33.333);
+            this._createPeriodicFn(SpacePirate.Utilities.makeCallback(this, this._runLevel), 1000 / SpacePirate.Game.Constants.levelFps);
             this._createPeriodicFn(SpacePirate.Utilities.makeCallback(this, this._eachSecond), 1000);
             this._run();
         },
@@ -60,7 +60,7 @@
                 self._timing.then = self._timing.now; // Reset last tick time
                 self._timing.total += self._timing.delta;
 
-                self._gameLoop();
+                self._iteratePeriodicFns();
 
                 /*. Run function again as soon as possible without lagging .*/
                 window.requestFrame(self._run);
@@ -91,7 +91,10 @@
             this._levelEngine = new SpacePirate.Game.LevelEngine({});
             this._levelEngine.loadLevel(SpacePirate.Levels.Level1);
 
-            this._levelEngine.addUnit(this._player, 0, 0);
+            this._levelEngine.addUnit(this._player, 0, 21);
+
+            var alien = new SpacePirate.Units.Alien_01();
+            this._levelEngine.addUnit(alien, 40, 21);
         },
 
         _setupLog: function() {
@@ -105,18 +108,18 @@
             $('.canvas-and-log').css('min-height', this._levelEngine.height() + 200);
         },
 
-        _gameLoop: function() {
-            this._iteratePeriodicFns();
+        //_gameLoop: function() {
+        //    this._iteratePeriodicFns();
+        //
+        //    //var modifier = this._timing.delta / 1000; // Multiply values by this modifier so things are consistent despite lag
+        //    //
+        //    //var keysDown = this._keyboard.keysDown;
+        //    //if (38 in keysDown) { // Player holding up
+        //    //    this._player.y -= this._player.speed * modifier;
+        //    //}
+        //},
 
-            //var modifier = this._timing.delta / 1000; // Multiply values by this modifier so things are consistent despite lag
-            //
-            //var keysDown = this._keyboard.keysDown;
-            //if (38 in keysDown) { // Player holding up
-            //    this._player.y -= this._player.speed * modifier;
-            //}
-        },
-
-        _everyTenthOfASecond: function(iterations) {
+        _runLevel: function(iterations) {
             this._levelEngine.run(iterations);
         },
 

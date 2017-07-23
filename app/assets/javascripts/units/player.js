@@ -33,6 +33,10 @@
                 ' XX  ',
                 ' XX  '
             ];
+        },
+
+        moveSpeed: function() {
+            return 1.0;
         }
 
     });

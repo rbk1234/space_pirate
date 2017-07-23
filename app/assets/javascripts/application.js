@@ -34,6 +34,7 @@
 
 //= require units/base.js
 //= require units/player.js
+//= require units/alien_01.js
 
 //= require utilities/helpers.js
 //= require utilities/initializers.js
