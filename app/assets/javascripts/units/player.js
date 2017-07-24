@@ -15,7 +15,7 @@
             this.team = SpacePirate.Game.Constants.playerTeam;
 
             this._hasAttack = true;
-            this._moveSpeed = 3;
+            this._moveSpeed = 5;
             this._attackSpeed = 2;
             this._attackRange = 20;
             this._attackDamage = 30;
@@ -36,7 +36,7 @@
             this._collision = [
                 ' XX  ',
                 'XXXXX',
-                ' XX  '
+                ' XXXX'
             ];
 
             this.fullRestore(); // TODO

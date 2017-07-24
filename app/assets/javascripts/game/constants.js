@@ -2,13 +2,15 @@
 (function ($) {
 
     SpacePirate.namespace('Game').Constants = {
-        gameTicksPerSecond: 5,
-
-        levelUpdatesPerSecond: 10, // Should be 10 or higher, otherwise high movement / atk speed won't work correctly
-        levelDrawsPerSecond: 10,
+        continuousDrawing: true,
+        levelUpdatesPerSecond: 15, // Note: needs to be higher than max(gravity, attack speed, etc.)
+        levelDrawsPerSecond: 15,
         resourceUpdatesPerSecond: 2,
 
-        gravity: 9.8, // spaces to fall per second
+        logTime: true,
+
+        gravity: 9.8, // # of spaces to fall per second
+        maxStepSize: 1, // # of spaces units can "step up" while moving
 
         playerTeam: 0,
         enemyTeam: 1

@@ -20,17 +20,17 @@
             this._collision = [
                 ' XX ',
                 'XXXX',
-                ' XX '
+                'XXXX'
             ];
 
             this._hasAttack = true;
-            this._attackSpeed = 0.25;
+            this._attackSpeed = 2;
             this._attackRange = 1;
-            this._attackDamage = 30;
+            this._attackDamage = 20;
             this._attackXY = [0,1];
 
-            this._moveSpeed = 3;
-            this._maxHealth = 200;
+            this._moveSpeed = 4;
+            this._maxHealth = 350;
 
             this._name = 'Alien';
 

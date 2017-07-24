@@ -55,6 +55,10 @@
             ////$p.click(function(){ /* ... */ });
             //this._$container.append($p);
 
+            if (SpacePirate.Game.Constants.logTime) {
+                message = (SpacePirate.Global.time / 1000).toFixed(3) + ': ' + message;
+            }
+
             this._$container.append(
                 $('<p>')
                     //.attr("id", "newDiv1")

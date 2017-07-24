@@ -97,7 +97,11 @@
 
             unit.x += deltaX;
             if (this._isColliding(unit, this._level) || this._isCollidingWithUnits(unit)) {
-                unit.x -= deltaX;
+                unit.y -= SpacePirate.Game.Constants.maxStepSize;
+                if (this._isColliding(unit, this._level) || this._isCollidingWithUnits(unit)) {
+                    unit.y += SpacePirate.Game.Constants.maxStepSize;
+                    unit.x -= deltaX;
+                }
             }
 
             unit.y += deltaY;
@@ -214,7 +218,9 @@
             if (attacker.cooldowns.attack === undefined) {
                 attacker.cooldowns.attack = 0;
             }
-            if (attacker.cooldowns.attack <= 0) {
+
+            // Note: Have to round cooldown due to floating point rounding errors
+            if (SpacePirate.Utilities.roundToDecimal(attacker.cooldowns.attack, 5) <= 0) {
                 var enemy = this._enemyInRange(attacker);
 
                 if (enemy) {

@@ -15,6 +15,7 @@
                 fontSize: 14
             });
             SpacePirate.Global.statistics = new SpacePirate.Game.Statistics();
+            SpacePirate.Global.time = 0;
 
             this._setupTiming();
             this._setupIO();
@@ -65,6 +66,7 @@
                 self._timing.then = self._timing.now; // Reset last tick time
                 self._timing.total += self._timing.delta;
 
+                SpacePirate.Global.time = self._timing.total;
                 self._iteratePeriodicFns();
 
                 /*. Run function again as soon as possible without lagging .*/
@@ -93,7 +95,7 @@
             this._levelEngine = new SpacePirate.Game.LevelEngine({});
             this._levelEngine.loadLevel(SpacePirate.Levels.Level1);
 
-            this._levelEngine.addUnit(this._player, 0, 10);
+            this._levelEngine.addUnit(this._player, 0, 21);
 
             var alien = new SpacePirate.Units.Alien_01();
             this._levelEngine.addUnit(alien, 40, 21);

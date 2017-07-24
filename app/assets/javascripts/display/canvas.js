@@ -44,8 +44,14 @@
         },
 
         drawImage: function(charArray, x, y) {
-            x = SpacePirate.Utilities.round(SpacePirate.Utilities.defaultFor(x, 0));
-            y = SpacePirate.Utilities.round(SpacePirate.Utilities.defaultFor(y, 0));
+            if (SpacePirate.Game.Constants.continuousDrawing) {
+                x = SpacePirate.Utilities.defaultFor(x, 0);
+                y = SpacePirate.Utilities.defaultFor(y, 0);
+            }
+            else {
+                x = SpacePirate.Utilities.round(SpacePirate.Utilities.defaultFor(x, 0));
+                y = SpacePirate.Utilities.round(SpacePirate.Utilities.defaultFor(y, 0));
+            }
 
             var scaledX = x * SpacePirate.Global.settings.fontWidth();
             var scaledY = y * SpacePirate.Global.settings.fontHeight();
