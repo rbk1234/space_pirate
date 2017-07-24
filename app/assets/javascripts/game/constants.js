@@ -3,7 +3,7 @@
 
     SpacePirate.namespace('Game').Constants = {
         continuousDrawing: true,
-        levelUpdatesPerSecond: 15, // Note: needs to be higher than max(gravity, attack speed, etc.)
+        levelUpdatesPerSecond: 15, // Note: needs to be higher than the max of gravity, attack speed, etc. for game to function correctly
         levelDrawsPerSecond: 15,
         resourceUpdatesPerSecond: 2,
 

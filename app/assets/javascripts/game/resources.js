@@ -11,8 +11,10 @@
             this._orePerSecond = 1;
         },
 
-        eachSecond: function(iterations) {
-            this.addOre(this._orePerSecond * iterations);
+        update: function(iterations, period) {
+            var seconds = iterations * period;
+
+            this.addOre(this._orePerSecond * seconds);
         },
 
         addOre: function(amount) {

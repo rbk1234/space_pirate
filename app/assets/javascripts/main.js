@@ -1,4 +1,12 @@
 
+/*
+    Notes:
+        Be careful any time you use < or <= or > or >=. Need to round any floating point numbers
+
+
+ */
+
+
 (function($){
 
     var Main = function() {
@@ -114,19 +122,9 @@
             $('.canvas-and-log').css('min-height', this._levelEngine.height() + 200);
         },
 
-        //_gameLoop: function() {
-        //    this._iteratePeriodicFns();
-        //
-        //    var modifier = this._timing.delta / 1000; // Multiply values by this modifier so things are consistent despite lag
-        //
-        //    console.log('delta: ' + this._timing.delta + ', modifier: '+modifier);
-        //
-        //    //var keysDown = this._keyboard.keysDown;
-        //    //if (38 in keysDown) { // Player holding up
-        //    //    this._player.y -= this._player.speed * modifier;
-        //    //}
-        //},
 
+
+        // ---------------------------------------------------------------- Periodic functions
         // Note: period is in seconds
 
         _updateLevel: function(iterations, period) {
@@ -144,7 +142,7 @@
             $('#fps').text(fps);
             $('#total-time').text(total);
 
-            SpacePirate.Global.resources.eachSecond(iterations);
+            SpacePirate.Global.resources.update(iterations, period);
             $('#ore').text(SpacePirate.Global.resources.ore);
 
             $('#memory').text(SpacePirate.Utilities.roundToDecimal(SpacePirate.Utilities.getMemoryUsage(), 2));
@@ -180,7 +178,7 @@
                             iterations += 1;
                             periodicFn.current -= periodicFn.period;
                         }
-                        periodicFn.fn(iterations, periodicFn.period / 1000.0);
+                        periodicFn.fn(iterations, periodicFn.period / 1000.0); // period is converted to seconds for fns
                     }
                 }
             });
