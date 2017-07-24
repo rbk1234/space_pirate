@@ -33,6 +33,11 @@
                 '/==;-',
                 ' /\\  '
             ];
+            this._imageAttack = [
+                ' [>  ',
+                '/==;-*',
+                ' /\\  '
+            ];
             this._collision = [
                 ' XX  ',
                 'XXXXX',

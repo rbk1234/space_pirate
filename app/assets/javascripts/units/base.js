@@ -78,7 +78,20 @@
         },
 
         image: function() {
-            return this._image || [[]];
+            var image = this._image || [[]];
+
+            if (this.animations) {
+                var highestPriority = 0;
+
+                SpacePirate.Utilities.iterateObject(this.animations, function(imageKey, animationData) {
+                    if (animationData.priority > highestPriority && this[imageKey] !== undefined) {
+                        highestPriority = animationData.priority;
+                        image = this[imageKey];
+                    }
+                }, this);
+            }
+
+            return image;
         },
 
         collision: function() {

@@ -34,6 +34,7 @@
             unit.x = x;
             unit.y = y;
             unit.cooldowns = {};
+            unit.animations = {};
             this._units.push(unit);
         },
 
@@ -55,10 +56,12 @@
             //SpacePirate.Global.log.logMessage('tick');
 
             this._units.forEach(function(unit) {
+                self._updateCooldowns(unit, period);
                 if (unit.team !== SpacePirate.Game.Constants.playerTeam || !this._enemyInRange(unit)) {
                     self._unitMove(unit, period);
                 }
                 self._unitAttack(unit, period);
+                self._updateAnimations(unit, period);
             }, this);
 
             this._clearDeadUnits();
@@ -84,6 +87,10 @@
                     this._units.splice(i, 1);
                 }
             }
+        },
+
+        _updateCooldowns: function(unit, period) {
+            // decrement cooldowns
         },
 
         _unitMove: function(unit, period) {
@@ -224,6 +231,7 @@
                 var enemy = this._enemyInRange(attacker);
 
                 if (enemy) {
+                    this._animateUnit(attacker, '_imageAttack', 0.2, 1);
                     enemy.dealDamage(attacker.attackDamage());
                     attacker.cooldowns.attack = attacker.attackCooldown();
                 }
@@ -231,6 +239,7 @@
             attacker.cooldowns.attack -= period;
         },
 
+        // TODO Base off of distances?
         _enemyInRange: function(attacker) {
             var from = attacker.attackXY();
             var range = attacker.attackRange();
@@ -260,6 +269,21 @@
             return false;
         },
 
+        _updateAnimations: function(unit, period) {
+            SpacePirate.Utilities.iterateObject(unit.animations, function(animationKey, animationData) {
+                animationData.duration -= period;
+                if (SpacePirate.Utilities.roundToDecimal(animationData.duration, 5) <= 0) {
+                    delete unit.animations[animationKey];
+                }
+            }, this);
+        },
+
+        _animateUnit: function(unit, animation, duration, priority) {
+            unit.animations[animation] = {
+                duration: duration,
+                priority: priority
+            };
+        },
 
 
         height: function() {

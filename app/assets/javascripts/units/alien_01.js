@@ -12,22 +12,46 @@
         _init: function(config) {
             SpacePirate.Units.Base.prototype._init.apply(this, arguments);
 
+            //this._image = [
+            //    ' < ',
+            //    's{}s',
+            //    ' ^^ '
+            //];
+            //this._imageAttack = [
+            //    '<  ',
+            //    's{}s',
+            //    ' ^^ '
+            //];
+            //this._collision = [
+            //    ' XX ',
+            //    'XXXX',
+            //    'XXXX'
+            //];
             this._image = [
-                ' <> ',
-                's{}s',
-                ' ^^ '
+                '   o    ',
+                '  oO0   ',
+                ' 0oOo.  ',
+                '^^^^^^^^'
+            ];
+            this._imageAttack = [
+                ' o      ',
+                'oO0     ',
+                '0oOo.   ',
+                '^^^^^^^^'
             ];
             this._collision = [
-                ' XX ',
-                'XXXX',
-                'XXXX'
+                '   X    ',
+                '  XXX   ',
+                ' XXXXX  ',
+                'XXXXXXXX'
             ];
 
             this._hasAttack = true;
             this._attackSpeed = 2;
             this._attackRange = 1;
             this._attackDamage = 20;
-            this._attackXY = [0,1];
+            //this._attackXY = [0,1];
+            this._attackXY = [0,2];
 
             this._moveSpeed = 4;
             this._maxHealth = 350;
