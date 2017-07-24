@@ -29,7 +29,7 @@
             this._attackDamage = 30;
             this._attackXY = [0,1];
 
-            this._moveSpeed = 1;
+            this._moveSpeed = 3;
             this._maxHealth = 200;
 
             this._name = 'Alien';

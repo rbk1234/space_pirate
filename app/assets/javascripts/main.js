@@ -23,9 +23,14 @@
             this._setupLevel();
             this._setupLog();
 
-            this._createPeriodicFn(SpacePirate.Utilities.makeCallback(this, this._runLevel), 1000 / SpacePirate.Game.Constants.gameTicksPerSecond);
-            this._createPeriodicFn(SpacePirate.Utilities.makeCallback(this, this._eachSecond), 1000);
-            this._run();
+            this._createPeriodicFn(SpacePirate.Utilities.makeCallback(this, this._updateLevel), 
+                1000 / SpacePirate.Game.Constants.levelUpdatesPerSecond);
+            this._createPeriodicFn(SpacePirate.Utilities.makeCallback(this, this._drawLevel),
+                1000 / SpacePirate.Game.Constants.levelDrawsPerSecond);
+            this._createPeriodicFn(SpacePirate.Utilities.makeCallback(this, this._updateResources),
+                1000 / SpacePirate.Game.Constants.resourceUpdatesPerSecond);
+
+            this._runGame();
         },
 
         _setupTiming: function() {
@@ -53,7 +58,7 @@
             };
 
             /*. Main function .*/
-            this._run = function () {
+            this._runGame = function () {
                 /*. Calculate time since last tick .*/
                 self._timing.now = Date.now() || (new Date).getTime(); // Get current time
                 self._timing.delta = self._timing.now - self._timing.then; // Get time since last tick
@@ -63,7 +68,7 @@
                 self._iteratePeriodicFns();
 
                 /*. Run function again as soon as possible without lagging .*/
-                window.requestFrame(self._run);
+                window.requestFrame(self._runGame);
             };
         },
 
@@ -81,19 +86,19 @@
             var playerFrame = new SpacePirate.Display.UnitFrame($('.player-unit-frame'), {});
             this._player.attachUnitFrame(playerFrame);
 
-            this._enemyFrame = new SpacePirate.Display.UnitFrame($('.enemy-unit-frame'), {});
+            SpacePirate.Global.enemyFrame = new SpacePirate.Display.UnitFrame($('.enemy-unit-frame'), {});
         },
 
         _setupLevel: function() {
             this._levelEngine = new SpacePirate.Game.LevelEngine({});
             this._levelEngine.loadLevel(SpacePirate.Levels.Level1);
 
-            this._levelEngine.addUnit(this._player, 0, 21);
+            this._levelEngine.addUnit(this._player, 0, 10);
 
             var alien = new SpacePirate.Units.Alien_01();
             this._levelEngine.addUnit(alien, 40, 21);
             this._levelEngine.addUnit(new SpacePirate.Units.Alien_01(), 60, 21);
-            alien.attachUnitFrame(this._enemyFrame);
+            alien.attachUnitFrame(SpacePirate.Global.enemyFrame);
         },
 
         _setupLog: function() {
@@ -110,19 +115,27 @@
         //_gameLoop: function() {
         //    this._iteratePeriodicFns();
         //
-        //    //var modifier = this._timing.delta / 1000; // Multiply values by this modifier so things are consistent despite lag
-        //    //
+        //    var modifier = this._timing.delta / 1000; // Multiply values by this modifier so things are consistent despite lag
+        //
+        //    console.log('delta: ' + this._timing.delta + ', modifier: '+modifier);
+        //
         //    //var keysDown = this._keyboard.keysDown;
         //    //if (38 in keysDown) { // Player holding up
         //    //    this._player.y -= this._player.speed * modifier;
         //    //}
         //},
 
-        _runLevel: function(iterations) {
-            this._levelEngine.run(iterations);
+        // Note: period is in seconds
+
+        _updateLevel: function(iterations, period) {
+            this._levelEngine.update(iterations, period);
         },
 
-        _eachSecond: function(iterations) {
+        _drawLevel: function(iterations, period) {
+            this._levelEngine.draw(iterations, period);
+        },
+
+        _updateResources: function(iterations, period) {
             var fps = (1000 / this._timing.delta).toFixed(1);
             var total = (this._timing.total / 1000).toFixed(1);
 
@@ -165,7 +178,7 @@
                             iterations += 1;
                             periodicFn.current -= periodicFn.period;
                         }
-                        periodicFn.fn(iterations);
+                        periodicFn.fn(iterations, periodicFn.period / 1000.0);
                     }
                 }
             });

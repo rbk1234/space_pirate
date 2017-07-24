@@ -43,39 +43,32 @@
             this.context.clearRect(0, 0, this.width(), this.height());
         },
 
-        drawImage_old: function(charArray, x, y) {
-            x = SpacePirate.Utilities.defaultFor(x, 0);
-            y = SpacePirate.Utilities.defaultFor(y, 0);
-            y += (SpacePirate.Global.settings.fontHeight() - 2); // Move down one row. Move up a tiny bit.
-
-            for (var row = 0; row < charArray.length; row++) {
-                for (var col = 0; col < charArray[row].length; col++) {
-                    this.context.fillText(
-                        charArray[row][col],
-                        x + col * SpacePirate.Global.settings.fontWidth(),
-                        y + row * SpacePirate.Global.settings.fontHeight()
-                    );
-                }
-            }
-        },
-
-        // TODO Very inefficient to draw one char at a time... draw one line at a time
         drawImage: function(charArray, x, y) {
-            x = Math.round(SpacePirate.Utilities.defaultFor(x, 0));
-            y = Math.round(SpacePirate.Utilities.defaultFor(y, 0));
+            x = SpacePirate.Utilities.round(SpacePirate.Utilities.defaultFor(x, 0));
+            y = SpacePirate.Utilities.round(SpacePirate.Utilities.defaultFor(y, 0));
 
             var scaledX = x * SpacePirate.Global.settings.fontWidth();
             var scaledY = y * SpacePirate.Global.settings.fontHeight();
             scaledY += (SpacePirate.Global.settings.fontHeight() - 2); // Move down one row. Move up a tiny bit.
 
+            // Draw one character at a time (inefficient)
+            //for (var row = 0; row < charArray.length; row++) {
+            //    for (var col = 0; col < charArray[row].length; col++) {
+            //        this.context.fillText(
+            //            charArray[row][col],
+            //            scaledX + col * SpacePirate.Global.settings.fontWidth(),
+            //            scaledY + row * SpacePirate.Global.settings.fontHeight()
+            //        );
+            //    }
+            //}
+
+            // Draw one line at a time
             for (var row = 0; row < charArray.length; row++) {
-                for (var col = 0; col < charArray[row].length; col++) {
-                    this.context.fillText(
-                        charArray[row][col],
-                        scaledX + col * SpacePirate.Global.settings.fontWidth(),
-                        scaledY + row * SpacePirate.Global.settings.fontHeight()
-                    );
-                }
+                this.context.fillText(
+                    charArray[row],
+                    scaledX,
+                    scaledY + row * SpacePirate.Global.settings.fontHeight()
+                )
             }
         },
 

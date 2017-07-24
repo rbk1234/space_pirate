@@ -78,9 +78,15 @@
         }
     };
 
+    var EPSILON = 0.000001; // Adding an epsilon to handle floating point rounding errors
+
     util.roundToDecimal = function(num, numDecimals) {
         var factor = 10 * numDecimals;
-        return Math.round((num + 0.00001) * factor) / factor;
+        return Math.round((num + EPSILON) * factor) / factor;
+    };
+
+    util.round = function(num) {
+        return Math.round(num + EPSILON);
     };
 
     util.minScreenWidth = function() {

@@ -33,28 +33,32 @@
         addUnit: function(unit, x, y) {
             unit.x = x;
             unit.y = y;
+            unit.cooldowns = {};
             this._units.push(unit);
         },
 
-        run: function(iterations) {
+        update: function(iterations, period) {
+            //console.log('period: '+period);
             while (iterations > 0) {
                 iterations--;
-                this._calculateLevelUpdates();
+                this._calculateLevelUpdates(period);
             }
+        },
 
-            // Only draw level once regardless of # of iterations
+        draw: function(/* iterations, period */) {
+            // Doesn't care about # of iterations; just draw once
             this._drawLevel();
         },
 
-        _calculateLevelUpdates: function() {
+        _calculateLevelUpdates: function(period) {
             var self = this;
             //SpacePirate.Global.log.logMessage('tick');
 
             this._units.forEach(function(unit) {
                 if (unit.team !== SpacePirate.Game.Constants.playerTeam || !this._enemyInRange(unit)) {
-                    self._unitMove(unit);
+                    self._unitMove(unit, period);
                 }
-                self._unitAttack(unit);
+                self._unitAttack(unit, period);
             }, this);
 
             this._clearDeadUnits();
@@ -82,53 +86,74 @@
             }
         },
 
-        _unitMove: function(unit) {
-            var deltaX = unit.moveSpeed();
-            var deltaY = SpacePirate.Game.Constants.gravity;
+        _unitMove: function(unit, period) {
+            // Assume a max of one space moved (may have to update if things move super fast - or update levelUpdatesPerSecond
+            var deltaX = unit.moveSpeed() * period;
+            var deltaY = SpacePirate.Game.Constants.gravity * period;
 
             if (deltaX === 0 && deltaY === 0) {
                 return; // Not moving
             }
 
-            var numSteps = (Math.max(Math.abs(deltaX), Math.abs(deltaY)));
-            var stepX = deltaX / numSteps;
-            var stepY = deltaY / numSteps;
+            unit.x += deltaX;
+            if (this._isColliding(unit, this._level) || this._isCollidingWithUnits(unit)) {
+                unit.x -= deltaX;
+            }
 
-            var allowMoveX = true;
-            var allowMoveY = true;
-            var numStepsX = 0;
-            var numStepsY = 0;
-
-            while (allowMoveX || allowMoveY) {
-                if (allowMoveX) {
-                    unit.x += stepX;
-                    numStepsX++;
-
-                    if (this._isColliding(unit, this._level) || this._isCollidingWithUnits(unit)) {
-                        unit.x -= stepX;
-                        allowMoveX = false;
-                    }
-
-                    if (numStepsX >= numSteps) {
-                        allowMoveX = false;
-                    }
-                }
-
-                if (allowMoveY) {
-                    unit.y += stepY;
-                    numStepsY++;
-
-                    if (this._isColliding(unit, this._level) || this._isCollidingWithUnits(unit)) {
-                        unit.y -= stepY;
-                        allowMoveY = false;
-                    }
-
-                    if (numStepsY >= numSteps) {
-                        allowMoveY = false;
-                    }
-                }
+            unit.y += deltaY;
+            if (this._isColliding(unit, this._level) || this._isCollidingWithUnits(unit)) {
+                unit.y -= deltaY;
             }
         },
+
+        //_unitMove: function(unit, period) {
+        //    var deltaX = unit.moveSpeed() * period;
+        //    var deltaY = SpacePirate.Game.Constants.gravity * period;
+        //
+        //    // TODO Doesn't work if step size < 1.0
+        //    if (deltaX === 0 && deltaY === 0) {
+        //        return; // Not moving
+        //    }
+        //
+        //    var numSteps = (Math.max(Math.abs(deltaX), Math.abs(deltaY)));
+        //    var stepX = deltaX / numSteps;
+        //    var stepY = deltaY / numSteps;
+        //
+        //    var allowMoveX = true;
+        //    var allowMoveY = true;
+        //    var numStepsX = 0;
+        //    var numStepsY = 0;
+        //
+        //    while (allowMoveX || allowMoveY) {
+        //        if (allowMoveX) {
+        //            unit.x += stepX;
+        //            numStepsX++;
+        //
+        //            if (this._isColliding(unit, this._level) || this._isCollidingWithUnits(unit)) {
+        //                unit.x -= stepX;
+        //                allowMoveX = false;
+        //            }
+        //
+        //            if (numStepsX >= numSteps) {
+        //                allowMoveX = false;
+        //            }
+        //        }
+        //
+        //        if (allowMoveY) {
+        //            unit.y += stepY;
+        //            numStepsY++;
+        //
+        //            if (this._isColliding(unit, this._level) || this._isCollidingWithUnits(unit)) {
+        //                unit.y -= stepY;
+        //                allowMoveY = false;
+        //            }
+        //
+        //            if (numStepsY >= numSteps) {
+        //                allowMoveY = false;
+        //            }
+        //        }
+        //    }
+        //},
 
         // x,y are rows/columns, but they can have decimals
         // obj can be a level, user, projectile, etc. Has to respond to x, y, and collision()
@@ -148,11 +173,10 @@
             //    largerObj = obj1;
             //}
 
-            var obj1_x = Math.round(obj1.x || 0);
-            var obj1_y = Math.round(obj1.y || 0);
-            var obj2_x = Math.round(obj2.x || 0);
-            var obj2_y = Math.round(obj2.y || 0);
-
+            var obj1_x = SpacePirate.Utilities.round(obj1.x || 0);
+            var obj1_y = SpacePirate.Utilities.round(obj1.y || 0);
+            var obj2_x = SpacePirate.Utilities.round(obj2.x || 0);
+            var obj2_y = SpacePirate.Utilities.round(obj2.y || 0);
 
             // first check
             // if 1_image || 2_image || (1_top > 2_bottom && 2_top > 1_bottom && 1_right > 2_left && 2_right > 1_left)
@@ -182,25 +206,23 @@
         },
 
 
-        _unitAttack: function(attacker) {
+        _unitAttack: function(attacker, period) {
             if (!attacker.hasAttack()) {
                 return;
             }
 
-            if (attacker.attackReady === undefined) {
-                attacker.attackReady = 1.0;
+            if (attacker.cooldowns.attack === undefined) {
+                attacker.cooldowns.attack = 0;
             }
-            if (attacker.attackReady >= 1.0) {
+            if (attacker.cooldowns.attack <= 0) {
                 var enemy = this._enemyInRange(attacker);
 
                 if (enemy) {
-                    //SpacePirate.Global.log.logMessage('attack!');
                     enemy.dealDamage(attacker.attackDamage());
-                    attacker.attackReady = 0;
+                    attacker.cooldowns.attack = attacker.attackCooldown();
                 }
             }
-
-            attacker.attackReady += attacker.attackSpeed();
+            attacker.cooldowns.attack -= period;
         },
 
         _enemyInRange: function(attacker) {

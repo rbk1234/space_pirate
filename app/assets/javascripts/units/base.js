@@ -56,11 +56,15 @@
         attackXY: function() {
             return this._attackXY || [0,0];
         },
-        moveSpeed: function() {
+        moveSpeed: function() { // spaces to move per second
             return (this._moveSpeed || 0) * this.direction();
         },
-        attackSpeed: function() {
+        attackSpeed: function() { // attacks per second
             return this._attackSpeed || 0;
+        },
+        attackCooldown: function() {
+            var attackSpeed = this.attackSpeed();
+            return (attackSpeed === 0) ? 99999 : 1 / this.attackSpeed();
         },
         attackRange: function() {
             return this._attackRange || 0;
@@ -133,7 +137,13 @@
                 this._kill();
             }
 
-            this._updateUnitFrame();
+            // TODO HACK Switching enemy frame on dmg taken
+            if (this.team !== SpacePirate.Game.Constants.playerTeam) {
+                this.attachUnitFrame(SpacePirate.Global.enemyFrame);
+            }
+            else {
+                this._updateUnitFrame();
+            }
         },
 
         _kill: function() {
