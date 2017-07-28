@@ -10,6 +10,7 @@
 
         _init: function(config) {
             this._units = [];
+            this._projectiles = [];
 
             this._setupCanvases();
         },
@@ -65,6 +66,12 @@
             }, this);
 
             this._clearDeadUnits();
+
+            this._projectiles.forEach(function(projectile) {
+                self._projectileMove(projectile, period);
+            }, this);
+
+            this._clearDeadProjectiles();
         },
 
         _drawLevel: function() {
@@ -79,12 +86,24 @@
             this._units.forEach(function(unit) {
                 self._canvases.main.drawImage(unit.image(), unit.x, unit.y);
             });
+
+            this._projectiles.forEach(function(projectile) {
+                self._canvases.main.drawImage(projectile.image(), projectile.x, projectile.y);
+            });
         },
 
         _clearDeadUnits: function() {
             for (var i = this._units.length - 1; i >= 0; i--) {
                 if (this._units[i].isDead) {
                     this._units.splice(i, 1);
+                }
+            }
+        },
+
+        _clearDeadProjectiles: function() {
+            for (var i = this._projectiles.length - 1; i >= 0; i--) {
+                if (this._projectiles[i].isDead) {
+                    this._projectiles.splice(i, 1);
                 }
             }
         },
@@ -103,68 +122,72 @@
             }
 
             unit.x += deltaX;
-            if (this._isColliding(unit, this._level) || this._isCollidingWithUnits(unit)) {
+            if (this._levelCollision(unit) || this._unitCollision(unit)) {
                 unit.y -= SpacePirate.Game.Constants.maxStepSize;
-                if (this._isColliding(unit, this._level) || this._isCollidingWithUnits(unit)) {
+                if (this._levelCollision(unit) || this._unitCollision(unit)) {
                     unit.y += SpacePirate.Game.Constants.maxStepSize;
                     unit.x -= deltaX;
                 }
             }
 
             unit.y += deltaY;
-            if (this._isColliding(unit, this._level) || this._isCollidingWithUnits(unit)) {
+            if (this._levelCollision(unit) || this._unitCollision(unit)) {
                 unit.y -= deltaY;
             }
         },
 
-        //_unitMove: function(unit, period) {
-        //    var deltaX = unit.moveSpeed() * period;
-        //    var deltaY = SpacePirate.Game.Constants.gravity * period;
-        //
-        //    // TODO Doesn't work if step size < 1.0
-        //    if (deltaX === 0 && deltaY === 0) {
-        //        return; // Not moving
-        //    }
-        //
-        //    var numSteps = (Math.max(Math.abs(deltaX), Math.abs(deltaY)));
-        //    var stepX = deltaX / numSteps;
-        //    var stepY = deltaY / numSteps;
-        //
-        //    var allowMoveX = true;
-        //    var allowMoveY = true;
-        //    var numStepsX = 0;
-        //    var numStepsY = 0;
-        //
-        //    while (allowMoveX || allowMoveY) {
-        //        if (allowMoveX) {
-        //            unit.x += stepX;
-        //            numStepsX++;
-        //
-        //            if (this._isColliding(unit, this._level) || this._isCollidingWithUnits(unit)) {
-        //                unit.x -= stepX;
-        //                allowMoveX = false;
-        //            }
-        //
-        //            if (numStepsX >= numSteps) {
-        //                allowMoveX = false;
-        //            }
-        //        }
-        //
-        //        if (allowMoveY) {
-        //            unit.y += stepY;
-        //            numStepsY++;
-        //
-        //            if (this._isColliding(unit, this._level) || this._isCollidingWithUnits(unit)) {
-        //                unit.y -= stepY;
-        //                allowMoveY = false;
-        //            }
-        //
-        //            if (numStepsY >= numSteps) {
-        //                allowMoveY = false;
-        //            }
-        //        }
-        //    }
-        //},
+        _projectileMove: function(projectile, period) {
+            // Assume a max of one space moved (may have to update if things move super fast - or update levelUpdatesPerSecond
+            var deltaX = projectile.moveSpeed() * period;
+
+            if (deltaX === 0) {
+                return; // Not moving
+            }
+
+            projectile.x += deltaX;
+            projectile.distanceTraveled += deltaX;
+
+            if (SpacePirate.Utilities.round(projectile.distanceTraveled) > projectile.range()) {
+                projectile.kill();
+                return;
+            }
+
+            var unit = this._unitCollision(projectile);
+            if (unit) {
+                unit.dealDamage(projectile.damage());
+                projectile.kill();
+            }
+            else if (this._levelCollision(projectile)) {
+                projectile.kill();
+            }
+        },
+        
+        _levelCollision: function(obj) {
+            return this._isColliding(obj, this._level);
+        },
+
+        _unitCollision: function(obj) {
+            for (var i = 0, len = this._units.length; i < len; i++) {
+                var unit = this._units[i];
+
+                switch(obj.type) {
+                    case 'unit':
+                        // Make sure not counting self
+                        if (obj.id !== unit.id && this._isColliding(obj, unit)) {
+                            return unit;
+                        }
+                        break;
+                    case 'projectile':
+                        // Make sure not counting friendly units
+                        if (obj.team !== unit.team && this._isColliding(obj, unit)) {
+                            return unit;
+                        }
+                        break;
+                }
+            }
+
+            return false;
+        },
 
         // x,y are rows/columns, but they can have decimals
         // obj can be a level, user, projectile, etc. Has to respond to x, y, and collision()
@@ -205,18 +228,6 @@
             return false;
         },
 
-        _isCollidingWithUnits: function(unit) {
-            for (var i = 0, len = this._units.length; i < len; i++) {
-                var otherUnit = this._units[i];
-                if (unit.id !== otherUnit.id && this._isColliding(unit, otherUnit)) {
-                    return true;
-                }
-            }
-
-            return false;
-        },
-
-
         _unitAttack: function(attacker, period) {
             if (!attacker.hasAttack()) {
                 return;
@@ -231,12 +242,35 @@
                 var enemy = this._enemyInRange(attacker);
 
                 if (enemy) {
-                    this._animateUnit(attacker, '_imageAttack', 0.2, 1);
-                    enemy.dealDamage(attacker.attackDamage());
+                    if (attacker.hasAttackProjectile()) {
+                        this._unitAttackProjectile(attacker);
+                    }
+                    else {
+                        this._animateUnit(attacker, '_imageAttack', 0.2, 1);
+                        enemy.dealDamage(attacker.attackDamage());
+                    }
                     attacker.cooldowns.attack = attacker.attackCooldown();
                 }
             }
             attacker.cooldowns.attack -= period;
+        },
+
+        _unitAttackProjectile: function(attacker, period) {
+            var from = attacker.attackXY();
+
+            var projectile = new SpacePirate.Projectiles.Base({
+                team: attacker.team,
+                _damage: attacker.attackDamage(),
+                _moveSpeed: 20,
+                _range: attacker.attackRange(),
+                _direction: attacker.direction(),
+                _image: [['-']],
+                _collision: [['X']],
+                x: attacker.x + from[0],
+                y: attacker.y + from[1]
+            });
+
+            this._projectiles.push(projectile);
         },
 
         // TODO Base off of distances?

@@ -15,6 +15,7 @@
 
         _init: function(config) {
             this.id = currentId;
+            this.type = 'unit';
             currentId++;
             this.team = SpacePirate.Game.Constants.enemyTeam;
             this._direction = -1;
@@ -52,6 +53,9 @@
 
         hasAttack: function() {
             return this._hasAttack || false;
+        },
+        hasAttackProjectile: function() {
+            return this._hasAttackProjectile || false;
         },
         attackXY: function() {
             return this._attackXY || [0,0];
@@ -147,7 +151,7 @@
             SpacePirate.Global.log.logMessage(this.name() + damageTakenString);
 
             if (this._currentHealth <= 0) {
-                this._kill();
+                this.kill();
             }
 
             // TODO HACK Switching enemy frame on dmg taken
@@ -159,7 +163,7 @@
             }
         },
 
-        _kill: function() {
+        kill: function() {
             this.isDead = true;
             this._currentHealth = 0;
             SpacePirate.Global.log.logMessage(this.name() + ' Died');

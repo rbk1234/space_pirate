@@ -20,7 +20,7 @@
             SpacePirate.namespace('Global'); // Init Global namespace
             SpacePirate.Global.resources = new SpacePirate.Game.Resources();
             SpacePirate.Global.settings = new SpacePirate.Game.Settings({
-                fontSize: 14
+                fontSize: 16
             });
             SpacePirate.Global.statistics = new SpacePirate.Game.Statistics();
             SpacePirate.Global.time = 0;

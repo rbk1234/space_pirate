@@ -31,19 +31,19 @@
                 '   o    ',
                 '  oO0   ',
                 ' 0oOo.  ',
-                '^^^^^^^^'
+                'oO0o0o0ooo..'
             ];
             this._imageAttack = [
                 ' o      ',
                 'oO0     ',
                 '0oOo.   ',
-                '^^^^^^^^'
+                'oO0o0o0ooo..'
             ];
             this._collision = [
                 '   X    ',
                 '  XXX   ',
-                ' XXXXX  ',
-                'XXXXXXXX'
+                ' XXXXX     X',
+                'XXXXXXXXXXXX'
             ];
 
             this._hasAttack = true;
@@ -56,7 +56,8 @@
             this._moveSpeed = 4;
             this._maxHealth = 350;
 
-            this._name = 'Alien';
+            this._name = '' +
+                'Oozeling';
 
             this.fullRestore();
         }

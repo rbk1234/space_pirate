@@ -32,6 +32,8 @@
 
 //= require io/keyboard.js
 
+//= require projectiles/base.js
+
 //= require units/base.js
 //= require units/player.js
 //= require units/alien_01.js

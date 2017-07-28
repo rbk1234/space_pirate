@@ -15,6 +15,7 @@
             this.team = SpacePirate.Game.Constants.playerTeam;
 
             this._hasAttack = true;
+            this._hasAttackProjectile = true;
             this._moveSpeed = 5;
             this._attackSpeed = 2;
             this._attackRange = 20;
@@ -47,8 +48,8 @@
             this.fullRestore(); // TODO
         },
 
-        _kill: function() {
-            SpacePirate.Units.Base.prototype._kill.apply(this, arguments);
+        kill: function() {
+            SpacePirate.Units.Base.prototype.kill.apply(this, arguments);
 
             SpacePirate.Global.statistics.countPlayerDeath();
         }
