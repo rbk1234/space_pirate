@@ -11,7 +11,7 @@
     initializers.register = function(key, callback) {
         //console.log('Registering initializer for ' + key);
         if(key in initializers.callbacks) {
-            console.log('  !! - Initializer already exists for ' + key);
+            //console.log('  !! - Initializer already exists for ' + key);
         }
 
         initializers.callbacks[key] = callback;
@@ -22,16 +22,16 @@
         var $target = params[0];
 
         if ($target && $target.isStale()) {
-            console.log('Ignoring initializer for '+key +' (stale)');
+            //console.log('Ignoring initializer for '+key +' (stale)');
             return;
         }
 
         if (key in initializers.callbacks) {
-            console.log('Firing initializer for ' + key);
+            //console.log('Firing initializer for ' + key);
             initializers.callbacks[key].apply(this, params);
         }
         else {
-            console.log('No initializer for ' + key);
+            //console.log('No initializer for ' + key);
         }
     };
 
@@ -62,7 +62,8 @@
     function doDocumentInit() {
         var $document = $(document);
 
-        SpacePirate.Init.onLoad('body.' + $('body').attr('class'), $document);
+        //SpacePirate.Init.onLoad('body.' + $('body').attr('class'), $document);
+        SpacePirate.Init.onLoad('application', $document);
         $document.foundation();
     }
 

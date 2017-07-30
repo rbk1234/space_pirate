@@ -1,0 +1,47 @@
+// Tabs
+.tabs{
+  background: transparent;
+  margin: 0.625em 0 0 0;
+
+}
+
+.tabs dd > a,
+.tabs .tab-title > a{
+  font-family: $font-family;
+  font-weight: 400;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-size: 0.875em;
+  background: transparent;
+  padding: 0.625rem 1.5rem;
+  text-decoration: none;
+  &:hover{
+    background: transparent;
+  }
+
+  &:focus {
+    outline-style: none;
+  }
+}
+
+//.tabs dd,
+//.tabs .tab-title{
+//  width: 100%;
+//
+//}
+
+.tabs dd.active a,
+.tabs .tab-title.active a{
+  background: transparent;
+}
+
+.tabs dd:not(.active) a,
+.tabs .tab-title:not(.active) a {
+  border-bottom: 0.250em solid $transparent; // So tabs don't jump around when there are too many to fit on one line (e.g. dashboard)
+}
+
+.tabs-content,
+.tabs-content > .content.active{
+  padding-bottom: 0;
+  margin-bottom: 0;
+}

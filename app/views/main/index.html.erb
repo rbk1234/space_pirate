@@ -1,13 +1,8 @@
 
-
-<div class="row" id="navigation-bar">
-
-</div>
-
 <div class="row row-full main-content">
   <div class="columns small-24">
-    <div class="row">
-      <div class="columns small-18">
+    <div class="row" hidden>
+      <div class="columns small-15">
         <h6>Space Pirate</h6>
       </div>
       <div class="columns small-3 stat-tables">
@@ -17,9 +12,15 @@
             <td width="50%" class="text-right">Time:</td>
             <td width="50%" id="total-time"></td>
           </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="columns small-3 stat-tables">
+        <table class="no-rows tight-spacing">
+          <tbody>
           <tr>
-            <td width="50%" class="text-right">Ore:</td>
-            <td width="50%" id="ore"></td>
+            <td width="50%" class="text-right">FPS:</td>
+            <td width="50%" id="fps"></td>
           </tr>
           </tbody>
         </table>
@@ -28,67 +29,25 @@
         <table class="no-rows tight-spacing">
           <tbody>
           <tr>
-            <td class="text-right">FPS:</td>
-            <td id="fps"></td>
-          </tr>
-          <tr>
-            <td class="text-right">Memory:</td>
-            <td id="memory"></td>
+            <td width="50%" class="text-right">Memory:</td>
+            <td width="50%" id="memory"></td>
           </tr>
           </tbody>
         </table>
       </div>
     </div>
 
-    <div class="row canvas-and-log">
-      <div class="small-24 columns canvas-container">
-        <!--<canvas id="background-canvas">Your browser does not support HTML5 Canvas.</canvas>-->
-        <canvas id="main-canvas">Your browser does not support HTML5 Canvas.</canvas>
-        <!--<canvas id="foreground-canvas">Your browser does not support HTML5 Canvas.</canvas>-->
-        <!--<canvas id="hidden-canvas">Your browser does not support HTML5 Canvas.</canvas>-->
-        <div class="row">
-          <div class="columns small-12 player-unit-frame">
-            <table class="no-rows tight-spacing">
-              <tbody>
-              <tr class="health-row">
-                <td class="nostretch"><b>Health</b></td>
-                <td><div class="status-bar"></div></td>
-                <td class="nostretch status-text"></td>
-              </tr>
-              <tr class="shield-row">
-                <td class="nostretch"><b>Shield</b></td>
-                <td><div class="status-bar"></div></td>
-                <td class="nostretch status-text"></td>
-              </tr>
-              </tbody>
-            </table>
-          </div>
-
-          <div class="columns small-12 enemy-unit-frame">
-            <table class="no-rows tight-spacing">
-              <tbody>
-              <tr class="health-row">
-                <td class="nostretch"><b>Health</b></td>
-                <td><div class="status-bar"></div></td>
-                <td class="nostretch status-text"></td>
-              </tr>
-              <tr class="shield-row">
-                <td class="nostretch"><b>Shield</b></td>
-                <td><div class="status-bar"></div></td>
-                <td class="nostretch status-text"></td>
-              </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
+    <ul class="tabs" data-tab style="margin-top:0;">
+      <li class="tab-title active"><a href="#resource-panel">Base</a></li>
+      <li class="tab-title"><a href="#world-panel">World</a></li>
+    </ul>
+    <div class="tabs-content">
+      <div class="content active" id="resource-panel">
+        <%= render partial: 'main/base' %>
       </div>
-      <div class="small-24 columns log-container">
-
+      <div class="content" id="world-panel">
+        <%= render partial: 'main/world' %>
       </div>
-    </div>
-
-    <div class="row">
-      Bottom text
     </div>
 
   </div>

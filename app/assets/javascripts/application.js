@@ -20,19 +20,27 @@
 //= require utilities/namespace.js
 //= require game/constants.js
 
+//= require devices/base.js
+//= require devices/lamp.js
+//= require devices/red_crystal.js
+
 //= require display/canvas.js
 //= require display/log.js
-//= require levels/level_01.js
 //= require display/unit_frame.js
 
 //= require game/level_engine.js
-//= require game/resources.js
+//= require game/resource_engine.js
 //= require game/settings.js
 //= require game/statistics.js
 
 //= require io/keyboard.js
 
+//= require levels/level_01.js
+
 //= require projectiles/base.js
+
+//= require resources/base.js
+//= require resources/energy.js
 
 //= require units/base.js
 //= require units/player.js
@@ -46,5 +54,6 @@
 //= require foundation
 
 $(function() {
+    console.log('Welcome to Space Pirate!');
     $(document).foundation();
 });

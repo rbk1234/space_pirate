@@ -54,7 +54,7 @@
 
         _calculateLevelUpdates: function(period) {
             var self = this;
-            //SpacePirate.Global.log.logMessage('tick');
+            //SpacePirate.Global.combatLog.logMessage('tick');
 
             this._units.forEach(function(unit) {
                 self._updateCooldowns(unit, period);

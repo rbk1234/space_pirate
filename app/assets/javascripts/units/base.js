@@ -105,7 +105,8 @@
         respawn: function() {
             if (this.isDead()) {
                 this.isDead = false;
-                SpacePirate.Global.log.logMessage(this.name() + ' Respawned');
+                SpacePirate.Global.combatLog.logMessage(this.name() + ' Respawned');
+                SpacePirate.Global.combatLog.logMessage(this.name() + ' Respawned');
                 this.fullRestore();
             }
         },
@@ -148,7 +149,7 @@
             if (amount > 0) {
                 damageTakenString += ' (' + amount + ' overkill)';
             }
-            SpacePirate.Global.log.logMessage(this.name() + damageTakenString);
+            SpacePirate.Global.combatLog.logMessage(this.name() + damageTakenString);
 
             if (this._currentHealth <= 0) {
                 this.kill();
@@ -166,7 +167,7 @@
         kill: function() {
             this.isDead = true;
             this._currentHealth = 0;
-            SpacePirate.Global.log.logMessage(this.name() + ' Died');
+            SpacePirate.Global.combatLog.logMessage(this.name() + ' Died');
         },
 
 

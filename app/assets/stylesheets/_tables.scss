@@ -1,12 +1,13 @@
 table {
   margin-bottom: 0;
+  background: transparent;
 }
 
-.stat-tables {
+//.stat-tables {
   table {
     width: 100%;
   }
-}
+//}
 
 td.nostretch, th.nostretch {
   width: 1%;
@@ -20,7 +21,7 @@ table.no-rows{
   tbody tr:nth-of-type(even),
   tbody tr.odd,
   tbody tr:nth-of-type(odd){
-    background: #fff;
+    background: transparent;
   }
 
 }
@@ -29,4 +30,8 @@ table.tight-spacing {
   tbody tr td {
     padding: 0.25em 0.25em;
   }
+}
+
+table.no-border {
+  border: none;
 }

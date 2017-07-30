@@ -4,6 +4,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>SpacePirate</title>
+  <%= favicon_link_tag 'favicon.ico' %>
 
   <%= stylesheet_link_tag "foundation_and_overrides", media: "all", "data-turbolinks-track" => true %>
   <%= stylesheet_link_tag "application", media: "all", "data-turbolinks-track" => true %>
@@ -14,7 +15,7 @@
   <%= csrf_meta_tags %>
 </head>
 
-<body class="<%= params[:controller].split('/')[0] %>">
+<body class="nightmode <%= params[:controller].split('/')[0] %>">
 <header>
   <%# render 'layouts/navigation' %>
 </header>
@@ -28,9 +29,11 @@
 
 <footer id="footer">
   <div class="container">
+    <% if false %>
     <p class="text-center">
       <small>Copyright &copy; <%= Time.now.year %></small>
     </p>
+    <% end %>
 
     <%# debug(params) if Rails.env.development? %>
   </div>

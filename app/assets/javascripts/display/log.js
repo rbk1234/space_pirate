@@ -6,9 +6,11 @@
         this._init(config);
     };
     Log.prototype = {
-        _dynamicScrolling: null, // If true, keeps the div scrolled to top
+        //_dynamicScrolling: null, // If true, keeps the div scrolled to bottom
 
-        _defaultConfig: {},
+        _defaultConfig: {
+            showTime: false
+        },
 
         _init: function(config) {
             var self = this;
@@ -20,16 +22,16 @@
                 return false;
             }
 
-            this._dynamicScrolling = true;
-
-            this._$container.off('scroll').on('scroll', function() {
-                self._dynamicScrolling = false;
-                var container = self._$container.get(0);
-
-                if (container.scrollTop + self._$container.height() >= container.scrollHeight) {
-                    self._dynamicScrolling = true;
-                }
-            });
+            //this._dynamicScrolling = true;
+            //
+            //this._$container.off('scroll').on('scroll', function() {
+            //    self._dynamicScrolling = false;
+            //    var container = self._$container.get(0);
+            //
+            //    if (container.scrollTop + self._$container.height() >= container.scrollHeight) {
+            //        self._dynamicScrolling = true;
+            //    }
+            //});
         },
 
         positionToRightOfFrame: function(frame) {
@@ -55,21 +57,21 @@
             ////$p.click(function(){ /* ... */ });
             //this._$container.append($p);
 
-            if (SpacePirate.Game.Constants.logTime) {
+            if (this._config.showTime) {
                 message = (SpacePirate.Global.time / 1000).toFixed(3) + ': ' + message;
             }
 
-            this._$container.append(
+            this._$container.prepend(
                 $('<p>')
                     //.attr("id", "newDiv1")
                     .addClass("log-paragraph")
                     .text(message)
             );
 
-            if (this._dynamicScrolling) {
-                var container = this._$container.get(0);
-                container.scrollTop = container.scrollHeight;
-            }
+            //if (this._dynamicScrolling) {
+            //    var container = this._$container.get(0);
+            //    container.scrollTop = container.scrollHeight;
+            //}
         }
 
 

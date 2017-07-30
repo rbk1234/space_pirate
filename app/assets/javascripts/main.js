@@ -18,7 +18,7 @@
         _init: function() {
             // Store Game Settings globally
             SpacePirate.namespace('Global'); // Init Global namespace
-            SpacePirate.Global.resources = new SpacePirate.Game.Resources();
+            SpacePirate.Global.resource_engine = new SpacePirate.Game.ResourceEngine();
             SpacePirate.Global.settings = new SpacePirate.Game.Settings({
                 fontSize: 16
             });
@@ -30,6 +30,7 @@
             this._setupPlayer();
             this._setupFrames();
             this._setupLevel();
+            this._setupResources();
             this._setupLog();
 
             this._createPeriodicFn(SpacePirate.Utilities.makeCallback(this, this._updateLevel), 
@@ -111,15 +112,25 @@
             alien.attachUnitFrame(SpacePirate.Global.enemyFrame);
         },
 
+        _setupResources: function() {
+            SpacePirate.Global.resource_engine.addResource(new SpacePirate.Resources.Energy());
+            SpacePirate.Global.resource_engine.addGenerator(new SpacePirate.Devices.RedCrystal());
+            SpacePirate.Global.resource_engine.addGenerator(new SpacePirate.Devices.RedCrystal());
+            SpacePirate.Global.resource_engine.addConsumer(new SpacePirate.Devices.Lamp());
+        },
+
         _setupLog: function() {
+            SpacePirate.Global.baseLog = new SpacePirate.Display.Log($('#base-log'));
+            SpacePirate.Global.baseLog.logMessage('Log initialized.');
+
             // Note: Depends on the level being instantiated so it can offset correctly
 
-            SpacePirate.Global.log = new SpacePirate.Display.Log($('.log-container'));
-            SpacePirate.Global.log.positionToRightOfFrame(this._levelEngine);
-            SpacePirate.Global.log.logMessage('Log initialized.');
+            SpacePirate.Global.combatLog = new SpacePirate.Display.Log($('.log-container'), {showTime: true});
+            SpacePirate.Global.combatLog.positionToRightOfFrame(this._levelEngine);
+            SpacePirate.Global.combatLog.logMessage('Log initialized.');
 
             // TODO HACK So that bottom stuff goes below canvas (canvas has absolute position so doesn't affect stuff)
-            $('.canvas-and-log').css('min-height', this._levelEngine.height() + 200);
+            $('.canvas-and-log').css('min-height', this._levelEngine.height() + 100);
         },
 
 
@@ -137,13 +148,12 @@
 
         _updateResources: function(iterations, period) {
             var fps = (1000 / this._timing.delta).toFixed(1);
-            var total = (this._timing.total / 1000).toFixed(1);
+            var total = (this._timing.total / 1000).toFixed(0);
 
             $('#fps').text(fps);
             $('#total-time').text(total);
 
-            SpacePirate.Global.resources.update(iterations, period);
-            $('#ore').text(SpacePirate.Global.resources.ore);
+            SpacePirate.Global.resource_engine.update(iterations, period);
 
             $('#memory').text(SpacePirate.Utilities.roundToDecimal(SpacePirate.Utilities.getMemoryUsage(), 2));
         },
@@ -186,7 +196,7 @@
 
     };
 
-    SpacePirate.Init.register('body.application', function($panel) {
+    SpacePirate.Init.register('application', function($panel) {
         $panel.data('main', new Main($panel));
     });
 
