@@ -1,0 +1,61 @@
+// Buttons
+.button {
+  background: inherit;
+  //height: $element-height;
+  line-height: $element-height;
+  padding: 0 1rem;
+  font-size: 1em;
+  border-radius: $radius;
+  border: 1px solid $daymode-font-color;
+  color: $daymode-font-color;
+  margin-bottom: 0;
+  font-family: $font-family;
+
+  &:hover, &:focus{
+    background: inherit;
+    border-color: $light-blue;
+    color: $light-blue;
+    outline: none;
+  }
+
+  &.disabled, &.disabled:hover, &.disabled:focus {
+    background-color: inherit;
+    color: $light-grey;
+    border-color: $light-grey;
+  }
+}
+
+.disabled-text {
+  color: $light-grey;
+}
+
+
+body.nightmode {
+  .button {
+    border: 1px solid $nightmode-font-color;
+    color: $nightmode-font-color;
+
+    &:hover, &:focus {
+      background: inherit;
+      border-color: $light-blue;
+      color: $light-blue;
+      outline: none;
+    }
+
+    &.disabled, &.disabled:hover, &.disabled:focus {
+      background-color: inherit;
+      color: $light-grey;
+      border-color: $light-grey;
+    }
+  }
+
+  .disabled-text {
+    color: $light-grey;
+  }
+}
+
+//.button.call-out{
+//  color: #fff;
+//  background: $light-blue;
+//  border: 1px solid $light-blue;
+//}

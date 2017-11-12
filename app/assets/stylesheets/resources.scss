@@ -9,3 +9,15 @@
 .neutral-value {
   color: $light-grey;
 }
+
+.device-details {
+  width: 400px;
+
+  .name {
+    font-weight: bold;
+  }
+
+  .material-name {
+    padding-left: 3rem;
+  }
+}

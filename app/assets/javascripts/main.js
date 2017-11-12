@@ -114,18 +114,30 @@
 
         _setupResources: function() {
             SpacePirate.Global.resource_engine.addResource(new SpacePirate.Resources.Energy());
-            SpacePirate.Global.resource_engine.addGenerator(new SpacePirate.Devices.RedCrystal());
-            SpacePirate.Global.resource_engine.addGenerator(new SpacePirate.Devices.RedCrystal());
-            SpacePirate.Global.resource_engine.addConsumer(new SpacePirate.Devices.Lamp());
+            SpacePirate.Global.resource_engine.addResource(new SpacePirate.Resources.ScrapMetal({
+                initialAmount: 20
+            }));
+
+            SpacePirate.Global.resource_engine.addGenerator(new SpacePirate.Devices.RedCrystal({
+                initialQuantity: 1
+            }));
+            SpacePirate.Global.resource_engine.addConsumer(new SpacePirate.Devices.Lamp({
+                initialQuantity: 1
+            }));
+
         },
 
         _setupLog: function() {
-            SpacePirate.Global.baseLog = new SpacePirate.Display.Log($('#base-log'));
+            SpacePirate.Global.baseLog = new SpacePirate.Display.Log($('#base-log'), {
+                showGlow: true
+            });
             SpacePirate.Global.baseLog.logMessage('Log initialized.');
 
             // Note: Depends on the level being instantiated so it can offset correctly
 
-            SpacePirate.Global.combatLog = new SpacePirate.Display.Log($('.log-container'), {showTime: true});
+            SpacePirate.Global.combatLog = new SpacePirate.Display.Log($('.log-container'), {
+                showTime: true
+            });
             SpacePirate.Global.combatLog.positionToRightOfFrame(this._levelEngine);
             SpacePirate.Global.combatLog.logMessage('Log initialized.');
 

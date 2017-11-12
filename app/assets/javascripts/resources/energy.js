@@ -15,6 +15,7 @@
             this.key = 'energy';
             this._name = 'Energy';
             this._description = 'Idk';
+            this._units = 'Ws';
         }
 
     });

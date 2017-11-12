@@ -14,6 +14,7 @@
 //= require jquery.turbolinks
 //= require jquery_ujs
 //= require jquery-ui/widgets/progressbar
+//= require jquery-ui/widgets/tooltip
 //= require turbolinks
 
 // Keep these first
@@ -21,6 +22,8 @@
 //= require game/constants.js
 
 //= require devices/base.js
+//= require devices/base_consumer.js
+//= require devices/base_generator.js
 //= require devices/lamp.js
 //= require devices/red_crystal.js
 
@@ -41,6 +44,7 @@
 
 //= require resources/base.js
 //= require resources/energy.js
+//= require resources/scrap_metal.js
 
 //= require units/base.js
 //= require units/player.js

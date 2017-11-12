@@ -9,7 +9,8 @@
         //_dynamicScrolling: null, // If true, keeps the div scrolled to bottom
 
         _defaultConfig: {
-            showTime: false
+            showTime: false,
+            showGlow: false
         },
 
         _init: function(config) {
@@ -61,12 +62,20 @@
                 message = (SpacePirate.Global.time / 1000).toFixed(3) + ': ' + message;
             }
 
-            this._$container.prepend(
-                $('<p>')
-                    //.attr("id", "newDiv1")
-                    .addClass("log-paragraph")
-                    .text(message)
-            );
+            var $p = $('<p>')
+                //.attr("id", "newDiv1")
+                .addClass("log-paragraph")
+                .text(message);
+
+            if (this._config.showGlow) {
+                $p.addClass('glow');
+
+                window.setTimeout(function() {
+                    $p.removeClass('glow');
+                }, 1000); // TODO Has to match glow animation
+            }
+
+            this._$container.prepend($p);
 
             //if (this._dynamicScrolling) {
             //    var container = this._$container.get(0);

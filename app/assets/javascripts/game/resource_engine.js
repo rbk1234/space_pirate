@@ -21,78 +21,65 @@
                 this._consume(period);
             }
 
-            this.updateView();
+            this.refreshView();
         },
 
         addGenerator: function(generator) {
             this._generators.push(generator);
-            this.reloadView();
+            this.setupView();
         },
 
         addConsumer: function(consumer) {
             this._consumers.push(consumer);
-            this.reloadView();
+            this.setupView();
         },
 
         addResource: function(resource) {
             this._resources.push(resource);
-            this.reloadView();
+            this.setupView();
         },
 
-        reloadView: function() {
+        resourceForKey: function(resourceKey) {
+            // TODO inefficient?
+            for (var i = 0, resourceLength = this._resources.length; i < resourceLength; i++) {
+                var resource = this._resources[i];
+                if (resource.key === resourceKey) {
+                    return resource;
+                }
+            }
+            return null;
+        },
+
+        setupView: function() {
             // Re-renders everything (don't want to do this often)
-            this._reloadGeneratorsView();
-            this._reloadConsumersView();
-            this._reloadResourcesView();
-            this.updateView();
-        },
-        updateView: function() {
-            // Updates all the views (ok to call this often)
-            this._updateGeneratorsView();
-            this._updateConsumersView();
-            this._updateResourcesView();
+            this._setupGeneratorsView();
+            this._setupConsumersView();
+            this._setupResourcesView();
+            this._setupDetailsView();
+            this.refreshView();
         },
 
-        _reloadGeneratorsView: function() {
-            var self = this;
+        refreshView: function() {
+            // Refreshes all the views (ok to call this often)
+            this._refreshGeneratorsView();
+            this._refreshConsumersView();
+            this._refreshResourcesView();
+            //this._refreshDetailsView();
+        },
+
+        _setupGeneratorsView: function() {
             var $generators = $('#generators');
-            var $generatorTbody = $generators.find('tbody');
-            var $generatorTemplate = $generatorTbody.find('.template');
 
-            $generatorTbody.find('tr:not(.template)').remove();
-
-            this._generators.forEach(function(generator) {
-                var $clone = $generatorTemplate.clone();
-                $clone.removeClass('template');
-                generator.$row = $clone;
-
-                $clone.find('.name').html(generator.name());
-                this._setupSwitch(generator);
-
-                $generatorTbody.append($clone);
-                $clone.show();
-            }, this);
+            this._setupDeviceList($generators.find('.device-list'), 'generator');
+            //this._setupDeviceDetails($generators.find('.device-details'), 'generator');
         },
-        _reloadConsumersView: function() {
+        _setupConsumersView: function() {
             var $consumers = $('#consumers');
-            var $consumerTbody = $consumers.find('tbody');
-            var $consumerTemplate = $consumerTbody.find('.template');
 
-            $consumerTbody.find('tr:not(.template)').remove();
-
-            this._consumers.forEach(function(consumer) {
-                var $clone = $consumerTemplate.clone();
-                $clone.removeClass('template');
-                consumer.$row = $clone;
-
-                $clone.find('.name').html(consumer.name());
-                this._setupSwitch(consumer);
-
-                $consumerTbody.append($clone);
-                $clone.show();
-            }, this);
+            this._setupDeviceList($consumers.find('.device-list'), 'consumer');
+            //this._setupDeviceDetails($consumers.find('.device-details'), 'consumer');
         },
-        _reloadResourcesView: function() {
+        _setupResourcesView: function() {
             var $resources = $('#resources');
             var $resourceTbody = $resources.find('tbody');
             var $resourceTemplate = $resourceTbody.find('.template');
@@ -111,6 +98,152 @@
             }, this);
         },
 
+        _setupDeviceList: function($table, type) {
+            var self = this;
+            var $tbody = $table.find('tbody');
+            var $deviceTemplate = $tbody.find('.template');
+
+            $tbody.find('tr.device').remove(); // Clear out everything
+
+            var deviceArray;
+            if (type === 'generator') {
+                deviceArray = this._generators;
+            }
+            else if (type === 'consumer') {
+                deviceArray = this._consumers;
+            }
+
+            deviceArray.forEach(function(device) {
+                var $clone = $deviceTemplate.clone();
+                $clone.removeClass('template').addClass('device');
+                device.$row = $clone;
+
+                this._setupName(device);
+                this._setupSwitch(device);
+
+                $clone.insertBefore($deviceTemplate);
+                $clone.show();
+            }, this);
+        },
+
+        _setupDetailsView: function() {
+            var self = this;
+            this._$details = $('#device-details');
+            //this._$details.find('.close').off('click').on('click', function(evt) {
+            //    evt.preventDefault();
+            //    self._$details.hide();
+            //});
+        },
+
+        //_setupDeviceDetails: function($details, type) {
+        //    if (type === 'generator') {
+        //        this._$generatorDetails = $details;
+        //    }
+        //    else if (type === 'consumer') {
+        //        this._$consumerDetails = $details;
+        //    }
+        //
+        //    $details.find('.close').off('click').on('click', function(evt) {
+        //        evt.preventDefault();
+        //        $details.hide();
+        //    });
+        //},
+
+        _showDetails: function($details, device) {
+            // show
+            //var $details = device.type === 'generator' ? this._$generatorDetails : this._$consumerDetails;
+            //$details.show();
+
+            // id
+            $details.data('id', device.id);
+
+            // name
+            $details.find('.name').html(device.name());
+
+            // unique
+            $details.find('.unique-label').toggle(device.unique());
+
+            // description
+            $details.find('.description').html(device.description());
+
+            // materials
+            var $materialsHeader = $details.find('.materials-header');
+            var $materialTemplate = $details.find('.material-template');
+            $details.find('.material').remove();
+            if (SpacePirate.Utilities.objectSize(device.materials()) > 0) {
+                $materialsHeader.show();
+                SpacePirate.Utilities.iterateObject(device.materials(), function(materialKey, quantity) {
+                    var resource = this.resourceForKey(materialKey);
+
+                    var $clone = $materialTemplate.clone();
+                    $clone.removeClass('material-template').addClass('material');
+
+                    $clone.find('.material-name').html(resource.name());
+                    $clone.find('.material-quantity').html(quantity + ' ' +resource.units());
+
+                    $clone.insertBefore($materialTemplate);
+                    $clone.show();
+                }, this);
+            }
+            else {
+                $materialsHeader.hide();
+            }
+
+            // consumption
+            if (device.type === 'generator') {
+                $details.find('.energy-description').html('Generates:');
+            }
+            else if (device.type === 'consumer') {
+                $details.find('.energy-description').html('Consumes:');
+            }
+            this._displayPower($details.find('.energy-rate'), device.resourceRateDescription('energy'));
+
+            // build
+        },
+
+        _setupName: function(device) {
+            var self = this;
+            var $name = device.$row.find('.name');
+            $name.html(device.name() + ' ('+device.quantity()+')');
+
+            // TODO NEW:
+            //$.widget("ui.tooltip", $.ui.tooltip, {
+            //    options: {
+            //        content: function () {
+            //            return $(this).prop('title');
+            //        }
+            //    }
+            //});
+            $name.attr('title', this._$details.html());
+
+            $name.tooltip({
+                track: true,
+                content: function() {
+                    return $(this).prop('title');
+                },
+                open: function(evt, ui) {
+                    console.log('open!'+evt+ui);
+
+                    $("div.ui-helper-hidden-accessible").remove();
+                    self._showDetails(ui.tooltip, device);
+                },
+                classes: {
+                    "ui-tooltip": "device-details"
+                }
+            });
+
+            //$name.off('click').on('click', function(evt) {
+            //    evt.preventDefault();
+            //
+            //    //var $currentDetails = device.type === 'generator' ? self._$generatorDetails : self._$consumerDetails;
+            //    if (self._$details.is(':visible') && device.id === self._$details.data('id')) {
+            //        self._$details.hide();
+            //    }
+            //    else {
+            //        self._showDetails(device);
+            //    }
+            //});
+        },
         _setupSwitch: function(device) {
             var self = this;
             var $onOff = device.$row.find('.on-off');
@@ -119,39 +252,39 @@
                 if ($onOff.hasClass('fa-toggle-off')) {
                     $onOff.removeClass('fa-toggle-off ').addClass('fa-toggle-on ');
                     device.turnOn();
-                    self._updateGeneratorsView();
-                    self._updateConsumersView();
+                    self._refreshGeneratorsView();
+                    self._refreshConsumersView();
                 }
                 else {
                     $onOff.removeClass('fa-toggle-on ').addClass('fa-toggle-off ');
                     device.turnOff();
-                    self._updateGeneratorsView();
-                    self._updateConsumersView();
+                    self._refreshGeneratorsView();
+                    self._refreshConsumersView();
                 }
             });
         },
 
-        _updateGeneratorsView: function() {
+        _refreshGeneratorsView: function() {
             this._generators.forEach(function(generator) {
-                this._displayPower(generator);
-                this._updateSwitch(generator);
+                this._displayPower(generator.$row.find('.value'), generator.resourceRate('energy'));
+                this._refreshSwitch(generator);
             }, this);
         },
-        _updateConsumersView: function() {
+        _refreshConsumersView: function() {
             this._consumers.forEach(function(consumer) {
-                this._displayPower(consumer);
-                this._updateSwitch(consumer);
+                this._displayPower(consumer.$row.find('.value'), consumer.resourceRate('energy'));
+                this._refreshSwitch(consumer);
             }, this);
         },
-        _updateResourcesView: function() {
+        _refreshResourcesView: function() {
             this._resources.forEach(function(resource) {
                 this._displayEnergy(resource);
             }, this);
         },
 
-        _updateSwitch: function(device) {
+        _refreshSwitch: function(device) {
             var $onOff = device.$row.find('.on-off');
-            if (device.running) {
+            if (device.anyOn()) {
                 $onOff.removeClass('fa-toggle-off ').addClass('fa-toggle-on ');
             }
             else {
@@ -159,25 +292,22 @@
             }
         },
 
-        _displayPower: function(device) {
-            var $element = device.$row.find('.value');
-            var value = device.resourceRate('energy');
-
+        _displayPower: function($element, value) {
             if (value === 0) {
-                $element.html(value+' W').removeClass('positive-value negative-value').addClass('neutral-value');
+                $element.html(value+' W\u00A0').removeClass('positive-value negative-value').addClass('neutral-value');
             }
             else if (value > 0) {
-                $element.html('+'+value+' W').removeClass('neutral-value negative-value').addClass('positive-value');
+                $element.html('+'+value+' W\u00A0').removeClass('neutral-value negative-value').addClass('positive-value');
             }
             else if (value < 0) {
-                $element.html(value+' W').removeClass('positive-value neutral-value').addClass('negative-value');
+                $element.html(value+' W\u00A0').removeClass('positive-value neutral-value').addClass('negative-value');
             }
         },
 
         _displayEnergy: function(resource) {
             var $element = resource.$row.find('.value');
             var value = resource.amount;
-            $element.html(value+' Ws');
+            $element.html(value+' '+resource.units());
         },
 
         _generate: function(seconds) {
@@ -186,7 +316,7 @@
 
                 for (var j = 0, generatorsLength = this._generators.length; j < generatorsLength; j++) {
                     var generator = this._generators[j];
-                    if (!generator.running) {
+                    if (!generator.anyOn()) {
                         continue;
                     }
 
@@ -201,7 +331,7 @@
 
                 for (var j = 0, consumersLength = this._consumers.length; j < consumersLength; j++) {
                     var consumer = this._consumers[j];
-                    if (!consumer.running) {
+                    if (!consumer.anyOn()) {
                         continue;
                     }
 

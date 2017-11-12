@@ -1,0 +1,12 @@
+
+@-webkit-keyframes white-glow {
+  to {
+    text-shadow: 0 0 14px $white;
+  }
+}
+
+@-webkit-keyframes black-glow {
+  to {
+    text-shadow: 0 0 14px $dark-grey;
+  }
+}

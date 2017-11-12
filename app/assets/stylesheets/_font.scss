@@ -12,6 +12,23 @@ body{
   background: $body-grey;
   color: $dark-grey;
 
+  &.slow-transitions {
+    transition-duration: 5s; // TODO if you change this, update lamp.js timeout
+
+    h1, h2, h3, h4, h5, h6 {
+      transition-duration: 5s;
+    }
+
+    a,
+    a:link {
+      transition-duration: 5s;
+    }
+  }
+
+  .glow {
+    -webkit-animation: black-glow 0.5s 2 alternate;
+  }
+
   table {
     font-size: $font-size-list;
 
@@ -76,8 +93,8 @@ body{
   // Links
   a,
   a:link{
-    color: $dark-blue;
-    text-decoration: underline;
+    color: $black;
+
     &.button{
       text-decoration: none;
     }
@@ -152,18 +169,6 @@ body{
     color: $dark-blue !important;
   }
 
-  .fa-color-lg{
-    color: $light-grey!important;
-    &.fa-disabled{
-      color: rgba( $light-grey, .4 )!important;
-    }
-  }
-
-  .fa-color-llg {
-    color: $lightest-grey !important;
-  }
-
-
   /* ----------------------------------------------- */
 
   // Tabs
@@ -210,11 +215,15 @@ body{
 
 
   &.nightmode {
-    background: $dark-grey;
-    color: $light-grey;
+    background: $nightmode-background;
+    color: $nightmode-font-color;
+
+    .glow {
+      -webkit-animation: white-glow 0.5s 2 alternate;
+    }
 
     h1, h2, h3, h4, h5, h6{
-      color: $light-grey;
+      color: $nightmode-font-color;
     }
 
     /* ----------------------------------------------- */
@@ -222,11 +231,12 @@ body{
     // Links
     a,
     a:link{
-      color: $dark-blue;
+      color: $nightmode-font-color;
     }
 
     a:hover{
       color: $light-blue;
+      //color: $white;
     }
 
     a.link-warn{
@@ -288,26 +298,16 @@ body{
       color: $dark-blue !important;
     }
 
-    .fa-color-lg{
-      color: $light-grey!important;
-      &.fa-disabled{
-        color: rgba( $light-grey, .4 )!important;
-      }
-    }
-
-    .fa-color-llg {
-      color: $lightest-grey !important;
-    }
-
     /* ----------------------------------------------- */
 
     // Tabs
 
     .tabs dd > a,
     .tabs .tab-title > a{
-      color: $light-grey;
+      color: $nightmode-font-color;
       &:hover{
-        color: $lightest-grey;
+        //color: $white;
+        color: $light-blue;
       }
     }
     .tabs dd.active a,

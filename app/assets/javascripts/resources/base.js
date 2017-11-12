@@ -8,13 +8,18 @@
     };
     Base.prototype = {
         id: null,
+        _defaultConfig: {
+            initialAmount: 0
+        },
 
         _init: function(config) {
             this.id = currentId;
             currentId++;
 
+            this._config = $.extend({}, this._defaultConfig, config);
+
             this.key = null;
-            this.amount = 0;
+            this.amount = this._config.initialAmount;
         },
 
         name: function() {
@@ -23,6 +28,10 @@
 
         description: function() {
             return this._description || 'No description';
+        },
+
+        units: function() {
+            return this._units || '';
         }
     };
 
